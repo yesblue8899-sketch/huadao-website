@@ -344,14 +344,13 @@ Hero 首屏
 ========================== */
 
 
-
 .hero{
 
 
-min-height:850px;
+min-height:760px;
 
 
-padding-top:86px;
+padding-top:70px;
 
 
 background:
@@ -368,7 +367,6 @@ linear-gradient(
 );
 
 
-
 position:relative;
 
 
@@ -379,7 +377,6 @@ color:white;
 
 
 }
-
 
 
 .hero::before{
@@ -425,8 +422,7 @@ transparent 65%
 .hero-container{
 
 
-height:760px;
-
+height:650px;
 
 display:flex;
 
@@ -474,7 +470,7 @@ margin-bottom:35px;
 .hero h1{
 
 
-font-size:70px;
+font-size:64px;
 
 
 font-weight:900;
@@ -497,19 +493,24 @@ margin-bottom:35px;
 .hero-desc{
 
 
-font-size:20px;
+font-size:18px;
 
 
-color:#d1dce8;
+color:rgba(255,255,255,.78);
 
 
 line-height:2;
 
 
-max-width:650px;
+max-width:620px;
+
+
+margin-bottom:45px;
 
 
 }
+
+
 
 
 
