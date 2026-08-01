@@ -2446,3 +2446,38 @@ z-index:999;
 transform:translateY(-3px);
 
 }
+/* 手机端适配 */
+@media (max-width:768px){
+
+.hero-container{
+    flex-direction:column;
+}
+
+.hero-left h1{
+    font-size:36px;
+}
+
+.hero-buttons{
+    flex-direction:column;
+}
+
+.btn-primary,
+.btn-secondary{
+    width:100%;
+}
+
+.nav{
+    display:none;
+}
+
+.stats-grid{
+    grid-template-columns:1fr;
+}
+
+.market-grid,
+.solution-grid,
+.case-grid{
+    grid-template-columns:1fr;
+}
+
+}
