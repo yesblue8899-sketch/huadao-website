@@ -2446,3 +2446,37 @@ z-index:999;
 transform:translateY(-3px);
 
 }
+.whatsapp-btn{
+
+position:fixed;
+
+right:30px;
+
+bottom:30px;
+
+background:#25D366;
+
+color:white;
+
+padding:15px 25px;
+
+border-radius:50px;
+
+font-size:16px;
+
+font-weight:bold;
+
+text-decoration:none;
+
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+
+z-index:9999;
+
+}
+
+
+.whatsapp-btn:hover{
+
+transform:translateY(-3px);
+
+}
