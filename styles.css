@@ -2717,3 +2717,217 @@ color:white;
 margin-top:30px;
 
 }
+/* =========================
+关于我们页面优化
+========================= */
+
+
+.company{
+    padding:120px 0;
+    background:#06192d;
+    color:#ffffff;
+}
+
+
+
+.company-wrapper{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:80px;
+
+}
+
+
+
+.company-content{
+
+    width:52%;
+
+}
+
+
+
+.company-content .section-tag{
+
+    color:#f39a1e;
+    letter-spacing:5px;
+    font-size:14px;
+    margin-bottom:25px;
+
+}
+
+
+
+.company-content h2{
+
+    font-size:52px;
+    line-height:1.25;
+    margin-bottom:35px;
+
+}
+
+
+
+.company-content p{
+
+    color:#c9d6e5;
+    font-size:18px;
+    line-height:2;
+    margin-bottom:20px;
+
+}
+
+
+
+.company-values{
+
+    display:flex;
+    gap:30px;
+    margin-top:45px;
+
+}
+
+
+
+.value-item{
+
+    padding:25px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:18px;
+    width:180px;
+
+}
+
+
+
+.value-item h3{
+
+    color:#f39a1e;
+    font-size:24px;
+    margin-bottom:15px;
+
+}
+
+
+
+.value-item span{
+
+    color:#d5dfeb;
+    line-height:1.8;
+
+}
+
+
+
+.company-image{
+
+    width:45%;
+
+}
+
+
+
+.company-image img{
+
+    width:100%;
+    border-radius:30px;
+    box-shadow:0 30px 80px rgba(0,0,0,.35);
+
+}
+
+
+
+
+
+.service-box{
+
+    margin-top:100px;
+
+}
+
+
+
+.service-box h2{
+
+    text-align:center;
+    font-size:42px;
+    margin-bottom:60px;
+
+}
+
+
+
+.service-grid{
+
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+
+}
+
+
+
+.service-card{
+
+    padding:35px;
+    background:#102b45;
+    border-radius:20px;
+    font-size:18px;
+    color:#f39a1e;
+
+}
+
+
+
+.service-card strong{
+
+    display:block;
+    margin-top:15px;
+    color:white;
+    font-size:22px;
+
+}
+
+
+
+
+.company-number{
+
+    margin-top:100px;
+    display:flex;
+    justify-content:center;
+    gap:120px;
+    padding:60px 0;
+    border-top:1px solid rgba(255,255,255,.15);
+
+}
+
+
+
+.company-number div{
+
+    text-align:center;
+
+}
+
+
+
+.company-number strong{
+
+    display:block;
+    color:#f39a1e;
+    font-size:60px;
+
+}
+
+
+
+.company-number span{
+
+    color:#d0dbe8;
+    font-size:18px;
+
+}
