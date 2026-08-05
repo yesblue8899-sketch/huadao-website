@@ -10,12 +10,14 @@
 - `assets/images/`：生产图片资源
 - `_headers`：Cloudflare Pages 缓存与安全响应头
 - `robots.txt` / `sitemap.xml`：SEO 基础文件
+- `_redirects`：阻止线上静态站点访问后端源码目录
 - `mexico-company-registration/`：墨西哥公司注册 SEO 页面
 - `mexico-rfc/`：墨西哥 RFC 税号申请 SEO 页面
 - `mercado-libre-mexico-local/`：墨西哥美客多本土店 SEO 页面
 - `tiktok-shop-mexico/`：TikTok Shop 墨西哥 SEO 页面
 - `brazil-market-entry/`：巴西市场进入 SEO 页面
 - `contact/`：独立联系我们页面
+- `server/`：阿里云 ECS 上运行的咨询表单后端 API
 
 ## Cloudflare Pages 设置
 

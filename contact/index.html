@@ -85,10 +85,10 @@
                     <h2>咨询入口</h2>
                     <div class="contact-methods">
                         <article>
-                            <span>WA</span>
+                            <span>咨</span>
                             <div>
-                                <h3>WhatsApp咨询</h3>
-                                <p>请在表单中留下WhatsApp号码，我们会优先通过WhatsApp联系。</p>
+                                <h3>微信/电话咨询</h3>
+                                <p>微信：Rowan_133777<br>电话：13377714337</p>
                                 <a class="text-link" href="#contact-form">填写联系方式</a>
                             </div>
                         </article>
@@ -109,23 +109,19 @@
                     </div>
                 </div>
 
-                <form id="contact-form" class="seo-form" action="mailto:contact@huadaoguoji.com" method="post" enctype="text/plain">
+                <form id="contact-form" class="seo-form" data-contact-form>
                     <div class="form-grid">
                         <label>
                             <span>公司名称</span>
-                            <input type="text" name="company" placeholder="请输入公司名称" autocomplete="organization" required>
+                            <input type="text" name="company" placeholder="请输入公司名称（选填）" autocomplete="organization">
                         </label>
                         <label>
                             <span>联系人</span>
                             <input type="text" name="name" placeholder="请输入联系人姓名" autocomplete="name" required>
                         </label>
-                        <label>
-                            <span>邮箱</span>
-                            <input type="email" name="email" placeholder="name@example.com" autocomplete="email" required>
-                        </label>
-                        <label>
-                            <span>WhatsApp / 微信</span>
-                            <input type="text" name="messenger" placeholder="请输入联系方式" autocomplete="tel">
+                        <label class="form-wide">
+                            <span>联系方式</span>
+                            <input type="text" name="contact" placeholder="请输入  微信 / 电话 / 邮箱（任选一种）" autocomplete="tel" required>
                         </label>
                     </div>
                     <label>
@@ -142,8 +138,9 @@
                         <span>咨询需求</span>
                         <textarea name="message" rows="6" placeholder="例如：墨西哥SA公司注册、RFC税号、美客多本土店、TikTok Shop墨西哥、巴西市场进入等。" required></textarea>
                     </label>
-                    <button class="btn btn-primary" type="submit">提交咨询</button>
-                    <p class="form-note">静态网站表单会调用本机邮件客户端发送信息。如需直连WhatsApp，请后续补充企业WhatsApp号码。</p>
+                    <button class="btn btn-primary" type="submit" data-contact-submit>提交咨询</button>
+                    <p class="form-note">提交后信息会发送到华道出海咨询系统，我们会尽快联系您。</p>
+                    <p class="form-status" data-contact-status aria-live="polite"></p>
                 </form>
             </div>
         </section>
@@ -188,7 +185,7 @@
                 <h2>联系我们</h2>
                 <a href="/contact/">获取方案</a>
                 <a href="mailto:contact@huadaoguoji.com">contact@huadaoguoji.com</a>
-                <a href="#contact-form">WhatsApp咨询</a>
+                <a href="#contact-form">微信/电话咨询</a>
             </nav>
         </div>
         <div class="container footer-bottom">
@@ -196,8 +193,13 @@
         </div>
     </footer>
 
-    <a class="floating-whatsapp" href="#contact-form" aria-label="WhatsApp咨询">
-        <span>WA</span>WhatsApp咨询
-    </a>
+    <button class="floating-whatsapp" type="button" aria-label="微信/电话咨询" data-consult-toggle>
+        <span>咨</span>微信/电话咨询
+    </button>
+    <div class="consult-popover" data-consult-popover hidden>
+        <strong>微信/电话咨询</strong>
+        <p>微信：Rowan_133777</p>
+        <p>电话：13377714337</p>
+    </div>
 </body>
 </html>
