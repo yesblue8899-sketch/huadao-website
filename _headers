@@ -1,0 +1,35 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Frame-Options: SAMEORIGIN
+
+/styles.css
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/script.js
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/assets/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/mexico-company-registration/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/mexico-rfc/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/mercado-libre-mexico-local/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/tiktok-shop-mexico/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/brazil-market-entry/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/contact/*
+  Cache-Control: public, max-age=0, must-revalidate
