@@ -1,0 +1,29 @@
+# 华道出海 HUADAO OVERSEAS 官网
+
+这是一个纯静态企业官网项目，可直接部署到 Cloudflare Pages。
+
+## 文件结构
+
+- `index.html`：官网首页与基础 SEO 结构
+- `styles.css`：统一变量、PC 样式、移动端响应式样式和 SEO 落地页样式
+- `script.js`：原生 JS 导航交互
+- `assets/images/`：生产图片资源
+- `_headers`：Cloudflare Pages 缓存与安全响应头
+- `robots.txt` / `sitemap.xml`：SEO 基础文件
+- `_redirects`：阻止线上静态站点访问后端源码目录
+- `mexico-company-registration/`：墨西哥公司注册 SEO 页面
+- `mexico-rfc/`：墨西哥 RFC 税号申请 SEO 页面
+- `mercado-libre-mexico-local/`：墨西哥美客多本土店 SEO 页面
+- `tiktok-shop-mexico/`：TikTok Shop 墨西哥 SEO 页面
+- `brazil-market-entry/`：巴西市场进入 SEO 页面
+- `contact/`：独立联系我们页面
+- `server/`：阿里云 ECS 上运行的咨询表单后端 API
+
+## Cloudflare Pages 设置
+
+- 构建命令：留空
+- 输出目录：项目根目录
+
+正式域名：`https://www.huadaoguoji.com/`
+
+如果后续更换域名，需要同步更新 `index.html`、各落地页、`robots.txt` 和 `sitemap.xml` 中的域名。
