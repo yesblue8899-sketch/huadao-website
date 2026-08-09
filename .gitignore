@@ -1,0 +1,15 @@
+# Build / browser temp artifacts (not part of the site)
+.chrome*/
+.chrome-*/
+screenshots/
+*.py
+
+# Pre-edit backups of pulled source
+*.current.html
+*.current.css
+*.current.js
+
+# OS / editor
+.DS_Store
+Thumbs.db
+node_modules/
