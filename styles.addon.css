@@ -663,9 +663,76 @@
     margin-inline:auto;
 }
 
+/* 首页洞察：三个核心入口（企业级，非知识库堆砌） */
+.insights-entry-grid{
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+}
+.insights-entry-grid .insights-entry-card{
+    max-width:none;
+    margin:0;
+    text-align:left;
+    padding:34px 28px;
+}
+.insights-entry-grid .insights-entry-card .btn{
+    margin-inline:0;
+}
+@media (max-width:900px){
+    .insights-entry-grid{
+        grid-template-columns:1fr;
+    }
+}
+
 /* ===== 页脚：增加栏目以承载新架构 ===== */
 .footer-grid{
     grid-template-columns:2fr 1fr 1fr 1fr 1fr;
+}
+
+/* ===== 解决方案：三大业务模块 ===== */
+.module-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+}
+.module-block{
+    background:var(--color-navy-900);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:var(--radius);
+    padding:28px 24px;
+}
+.module-block h3{
+    margin:0 0 16px;
+    color:var(--color-orange-600);
+    font-size:18px;
+    font-weight:900;
+}
+.module-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:grid;
+    gap:10px;
+}
+.module-list a{
+    color:#cdd9e6;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:15px;
+}
+.module-list a::before{
+    content:"\203A";
+    color:var(--color-orange-600);
+    font-weight:700;
+}
+.module-list a:hover{
+    color:#fff;
+}
+@media (max-width:900px){
+    .module-grid{
+        grid-template-columns:1fr;
+    }
 }
 
 /* ===== 卡片链接（关联指南 / 业务线跳转） ===== */

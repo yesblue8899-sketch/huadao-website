@@ -122,7 +122,7 @@
     window.addEventListener("scroll", setHeaderState, { passive: true });
 })();
 
-/* 拉美市场进入评估：免费基础自测 */
+/* 拉美市场进入评估：免费基础自测，输出推荐进入路径 */
 (() => {
     const form = document.querySelector("[data-assess-form]");
     const result = document.querySelector("[data-assess-result]");
@@ -141,11 +141,16 @@
         cross: "已在跨境店运营",
         local: "已在本土店运营"
     };
-    const needLabel = {
-        entity: "主体注册",
-        tax: "税号与税务合规",
-        platform: "平台入驻",
-        fulfill: "履约与运营"
+    const pathByMarket = {
+        mx: "墨西哥 SA 主体设立 → RFC 税号申请 → 美客多 / TikTok Shop 本土店入驻 → 财税合规托管",
+        br: "巴西 CNPJ 主体登记 → 税务（ICMS / IPI）衔接 → 本土平台入驻 → 合规与资料维护",
+        both: "墨西哥 SA + 巴西 CNPJ 双主体 → 两国税号与平台资质 → 统一财税合规与履约协同"
+    };
+    const stageNote = {
+        research: "建议从本地主体设立与税号起步，先把合规底座打好。",
+        prepare: "建议尽快推进主体与税号，为平台入驻预留前置周期。",
+        cross: "已有跨境店，建议尽快平移到本土主体 + 税号，解锁本土店权限与流量。",
+        local: "已在本土店运营，建议重点强化财税合规与资料维护，降低经营风险。"
     };
 
     form.addEventListener("submit", (event) => {
@@ -154,28 +159,23 @@
         const q0 = String(data.get("q0") || "").trim();
         const q1 = String(data.get("q1") || "").trim();
         const q2 = String(data.get("q2") || "").trim();
-        const q3 = String(data.get("q3") || "").trim();
 
-        if (!q0 || !q1 || !q2 || !q3) {
-            result.textContent = "请完成全部 4 个问题，查看建议路径。";
+        if (!q0 || !q1 || !q2) {
+            result.textContent = "请完成全部 3 个问题，查看推荐进入路径。";
             return;
         }
 
-        const type = typeLabel[q0] || "企业类型";
+        const type = typeLabel[q0] || "企业";
         const market = marketLabel[q1] || "目标市场";
         const stage = stageLabel[q2] || "当前阶段";
-        const need = needLabel[q3] || "核心需求";
-
-        let priority;
-        if (q3 === "entity") priority = "建议优先完成本地主体设立（SA 公司 / CNPJ），这是后续税号、平台与合规的前置条件。";
-        else if (q3 === "tax") priority = "建议优先梳理 RFC / CNPJ 税务体系，建立可合规申报的账务与票据机制。";
-        else if (q3 === "platform") priority = "建议先补齐本地主体与税号，再推进美客多 / TikTok Shop 本土店入驻资质。";
-        else priority = "建议围绕本土物流、售后与持续合规，构建稳定的在地经营闭环。";
+        const path = pathByMarket[q1] || "本地主体设立 → 税号衔接 → 平台落地 → 合规经营";
+        const note = stageNote[q2] || "";
 
         result.innerHTML =
-            "<strong>建议路径摘要</strong><br>" +
-            "企业类型：" + type + "；目标市场：" + market + "；" + stage + "；最紧迫：" + need + "。<br>" +
-            priority + "<br>" +
-            "<span style=\"color:var(--color-muted);font-size:13px;\">填写右侧企业信息，可获取更详细的落地方案。</span>";
+            "<strong>推荐进入路径</strong><br>" +
+            "企业类型：" + type + "；目标市场：" + market + "；" + stage + "。<br>" +
+            "<span style=\"color:var(--color-orange-600);font-weight:700;\">" + path + "</span><br>" +
+            note + "<br>" +
+            "<span style=\"color:var(--color-muted);font-size:13px;\">填写右侧企业信息，可获取更详细的落地方案与周期清单。</span>";
     });
 })();
