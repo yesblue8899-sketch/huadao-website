@@ -924,3 +924,53 @@ a.seo-card:hover{
         border-bottom:1px solid var(--color-border);
     }
 }
+
+/* ===== SEO 文章页：专题返回与转化入口 ===== */
+.article-topic-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.article-topic-link{
+    display:inline-flex;
+    align-items:center;
+    min-height:40px;
+    padding:9px 14px;
+    color:var(--color-white);
+    text-decoration:none;
+    font-size:14px;
+    font-weight:900;
+    line-height:1.3;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(243,154,32,.42);
+    border-radius:var(--radius);
+    transition:background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.article-topic-link:hover,
+.article-topic-link:focus-visible{
+    color:var(--color-white);
+    background:rgba(243,154,32,.18);
+    border-color:rgba(243,154,32,.78);
+    transform:translateY(-2px);
+}
+
+.related-guide-card{
+    color:inherit;
+    text-decoration:none;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.related-guide-card:hover,
+.related-guide-card:focus-visible{
+    color:inherit;
+    transform:translateY(-5px);
+    border-color:rgba(243,154,32,.36);
+    box-shadow:var(--shadow-md);
+}
+
+.article-next-action .btn-primary{
+    min-width:190px;
+}
