@@ -52,7 +52,7 @@
 }
 .reason-grid{
     display:grid;
-    grid-template-columns:repeat(5,minmax(0,1fr));
+    grid-template-columns:repeat(3,minmax(0,1fr));
     gap:20px;
 }
 .reason-card{
@@ -89,6 +89,49 @@
     color:var(--color-muted);
     font-size:14px;
     line-height:1.8;
+}
+
+.pain-grid{
+    max-width:1060px;
+    margin-inline:auto;
+}
+
+.process-grid-four{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+.process-step{
+    display:block;
+    color:inherit;
+    text-decoration:none;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.process-step:hover,
+.process-step:focus-visible{
+    transform:translateY(-5px);
+    border-color:rgba(243,154,32,.36);
+    box-shadow:var(--shadow-md);
+}
+
+.step-deliver{
+    margin-top:12px;
+    color:var(--color-muted);
+    font-size:14px;
+    line-height:1.75;
+}
+
+.home-faq{
+    background:var(--color-bg-soft);
+}
+
+.home-faq-list{
+    max-width:920px;
+    margin-inline:auto;
+}
+
+.home-faq .text-link{
+    display:inline;
 }
 
 /* 企业保障（已在 HTML 中复用 .conversion-grid / .conversion-card） */
@@ -292,6 +335,12 @@
     .reason-grid{
         grid-template-columns:repeat(3,minmax(0,1fr));
     }
+    .process-grid-four{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .process-grid-four .process-step::after{
+        display:none;
+    }
     .assess-layout{
         grid-template-columns:1fr;
         gap:24px;
@@ -309,6 +358,9 @@
     .reason-grid{
         grid-template-columns:1fr;
         gap:18px;
+    }
+    .process-grid-four{
+        grid-template-columns:1fr;
     }
     .reason-card{
         min-height:auto;

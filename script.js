@@ -8,7 +8,8 @@
     const contactForm = document.querySelector("[data-contact-form]");
     const contactSubmit = document.querySelector("[data-contact-submit]");
     const contactStatus = document.querySelector("[data-contact-status]");
-    const contactApiUrl = "https://api.huadaoguoji.com/api/contact";
+    const contactEmail = "contact@huadaoguoji.com";
+    const contactSubmitLabel = contactSubmit ? contactSubmit.textContent : "";
 
     const setHeaderState = () => {
         if (!header) return;
@@ -57,10 +58,24 @@
         });
     }
 
-    if (contactForm) {
-        contactForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
+    const buildConsultMailto = (payload) => {
+        const subject = "拉美市场进入咨询" + (payload.company ? " - " + payload.company : "");
+        const body = [
+            "公司名称：" + (payload.company || "未填写"),
+            "联系人：" + payload.name,
+            "联系方式：" + payload.contact,
+            "目标市场：" + payload.market,
+            "",
+            "咨询需求：",
+            payload.message
+        ].join("\n");
 
+        return "mailto:" + contactEmail + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    };
+
+    if (contactForm) {
+        contactForm.addEventListener("submit", (event) => {
+            event.preventDefault();
             const formData = new FormData(contactForm);
             const payload = {
                 company: String(formData.get("company") || "").trim(),
@@ -79,41 +94,20 @@
             }
 
             if (contactSubmit) {
-                contactSubmit.disabled = true;
-                contactSubmit.textContent = "提交中...";
+                contactSubmit.textContent = "打开邮件客户端...";
             }
 
             if (contactStatus) {
-                contactStatus.textContent = "";
-                contactStatus.className = "form-status";
+                contactStatus.textContent = "正在打开邮件客户端，请确认发送咨询邮件。";
+                contactStatus.className = "form-status is-success";
             }
 
-            try {
-                const response = await fetch(contactApiUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payload)
-                });
+            window.location.href = buildConsultMailto(payload);
 
-                if (!response.ok) throw new Error("Request failed");
-
-                contactForm.reset();
-                if (contactStatus) {
-                    contactStatus.textContent = "提交成功，我们会尽快联系您";
-                    contactStatus.className = "form-status is-success";
-                }
-            } catch (error) {
-                if (contactStatus) {
-                    contactStatus.textContent = "提交失败，请稍后重试";
-                    contactStatus.className = "form-status is-error";
-                }
-            } finally {
-                if (contactSubmit) {
-                    contactSubmit.disabled = false;
-                    contactSubmit.textContent = "提交咨询";
-                }
+            if (contactSubmit) {
+                window.setTimeout(() => {
+                    contactSubmit.textContent = contactSubmitLabel || "提交咨询";
+                }, 800);
             }
         });
     }
