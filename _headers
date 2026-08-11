@@ -33,3 +33,9 @@
 
 /contact/*
   Cache-Control: public, max-age=0, must-revalidate
+
+/insights/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/api/insights
+  Cache-Control: no-store
