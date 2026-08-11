@@ -57,12 +57,12 @@
                         <a href="/solutions/compliance/">财税合规</a>
                     </div>
                 </div>
-                <a href="/insights/">行业洞察</a>
+                <a href="/insights/">拉美市场情报</a>
                 <a href="/#company">关于我们</a>
                 <a href="/#contact">联系我们</a>
             </nav>
 
-        <a class="nav-cta" href="/#contact">获取方案</a>
+        <a class="nav-cta" href="#assessment-form">获取方案</a>
     </div>
 </header>
 <main id="main" class="seo-page">
@@ -138,7 +138,7 @@
                         <div class="form-grid">
                             <label class="form-wide">
                                 <span>公司名称</span>
-                                <input type="text" name="company" placeholder="您的公司或品牌名称" autocomplete="organization">
+                                <input type="text" name="company" placeholder="您的公司或品牌名称" autocomplete="organization" required>
                             </label>
                             <label>
                                 <span>联系人</span>
@@ -149,21 +149,45 @@
                                 <input type="text" name="contact" placeholder="微信 / 电话 / 邮箱" autocomplete="tel" required>
                             </label>
                             <label class="form-wide">
-                                <span>目标市场</span>
+                                <span>想了解市场</span>
                                 <select name="market" required>
                                     <option value="">请选择</option>
                                     <option value="墨西哥">墨西哥</option>
                                     <option value="巴西">巴西</option>
-                                    <option value="墨西哥+巴西">墨西哥 + 巴西</option>
+                                    <option value="墨西哥+巴西">两者</option>
+                                    <option value="其他市场">其他市场</option>
                                 </select>
                             </label>
                             <label class="form-wide">
-                                <span>咨询需求</span>
-                                <textarea name="message" placeholder="简述您的业务阶段与最紧迫需求" required></textarea>
+                                <span>当前阶段</span>
+                                <select name="stage" required>
+                                    <option value="">请选择</option>
+                                    <option value="准备进入拉美">准备进入拉美</option>
+                                    <option value="已经有跨境店铺">已经有跨境店铺</option>
+                                    <option value="想升级本土店">想升级本土店</option>
+                                    <option value="企业品牌出海">企业品牌出海</option>
+                                </select>
+                            </label>
+                            <label class="form-wide">
+                                <span>当前业务情况</span>
+                                <textarea name="business" placeholder="简述您的业务阶段、当前平台、目标国家和最紧迫需求" required></textarea>
+                            </label>
+                            <fieldset class="form-wide">
+                                <legend>来源渠道</legend>
+                                <div class="lead-source-grid">
+                                    <label class="lead-source-option"><input type="radio" name="source" value="官网" checked> 官网</label>
+                                    <label class="lead-source-option"><input type="radio" name="source" value="抖音"> 抖音</label>
+                                    <label class="lead-source-option"><input type="radio" name="source" value="小红书"> 小红书</label>
+                                    <label class="lead-source-option"><input type="radio" name="source" value="公众号"> 公众号</label>
+                                </div>
+                            </fieldset>
+                            <label class="lead-hidden-field" aria-hidden="true">
+                                <span>Website</span>
+                                <input type="text" name="website" tabindex="-1" autocomplete="off">
                             </label>
                         </div>
-                        <button class="btn btn-primary" type="submit" data-contact-submit>提交并获取方案</button>
-                        <p class="form-note">提交后会打开邮件客户端，请确认发送咨询邮件，我们会尽快联系您。</p>
+                        <button class="btn btn-primary" type="submit" data-contact-submit>立即咨询</button>
+                        <p class="form-note">提交后无需打开邮箱，我们将在12小时内通过您留下的方式联系。</p>
                         <p class="form-status" data-contact-status role="status"></p>
                     </form>
                 </div>
@@ -225,7 +249,7 @@
                 <h2>市场专题</h2>
                 <a href="/mexico/">墨西哥市场</a>
                 <a href="/brazil/">巴西市场</a>
-                <a href="/insights/">行业洞察</a>
+                <a href="/insights/">拉美市场情报</a>
             </nav>
 
             <nav class="footer-column" aria-label="热门指南">

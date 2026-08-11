@@ -5,11 +5,7 @@
     const navLinks = nav ? Array.from(nav.querySelectorAll("a")) : [];
     const consultToggle = document.querySelector("[data-consult-toggle]");
     const consultPopover = document.querySelector("[data-consult-popover]");
-    const contactForm = document.querySelector("[data-contact-form]");
-    const contactSubmit = document.querySelector("[data-contact-submit]");
-    const contactStatus = document.querySelector("[data-contact-status]");
-    const contactEmail = "contact@huadaoguoji.com";
-    const contactSubmitLabel = contactSubmit ? contactSubmit.textContent : "";
+    const contactForms = Array.from(document.querySelectorAll("[data-contact-form]"));
 
     const setHeaderState = () => {
         if (!header) return;
@@ -58,59 +54,114 @@
         });
     }
 
-    const buildConsultMailto = (payload) => {
-        const subject = "拉美市场进入咨询" + (payload.company ? " - " + payload.company : "");
-        const body = [
-            "公司名称：" + (payload.company || "未填写"),
-            "联系人：" + payload.name,
-            "联系方式：" + payload.contact,
-            "目标市场：" + payload.market,
-            "",
-            "咨询需求：",
-            payload.message
-        ].join("\n");
+    const showLeadSuccess = () => {
+        const existing = document.querySelector("[data-lead-modal]");
+        if (existing) existing.remove();
 
-        return "mailto:" + contactEmail + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        const modal = document.createElement("div");
+        modal.className = "lead-modal";
+        modal.setAttribute("data-lead-modal", "");
+        modal.setAttribute("role", "dialog");
+        modal.setAttribute("aria-modal", "true");
+        modal.setAttribute("aria-label", "提交成功");
+        modal.innerHTML =
+            '<div class="lead-modal-panel">' +
+            '<button class="lead-modal-close" type="button" aria-label="关闭">×</button>' +
+            '<p class="eyebrow">提交成功</p>' +
+            '<h2>提交成功，我们将在12小时内联系您。</h2>' +
+            '<p>您的信息已提交给华道出海顾问团队。请保持电话或微信畅通，我们会结合目标市场与当前阶段跟进。</p>' +
+            '<button class="btn btn-primary" type="button" data-lead-modal-ok>知道了</button>' +
+            '</div>';
+
+        const close = () => modal.remove();
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) close();
+        });
+        modal.querySelector(".lead-modal-close").addEventListener("click", close);
+        modal.querySelector("[data-lead-modal-ok]").addEventListener("click", close);
+        document.addEventListener("keydown", function onEscape(event) {
+            if (event.key === "Escape") {
+                close();
+                document.removeEventListener("keydown", onEscape);
+            }
+        });
+        document.body.appendChild(modal);
+        modal.querySelector("[data-lead-modal-ok]").focus();
     };
 
-    if (contactForm) {
-        contactForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            const formData = new FormData(contactForm);
-            const payload = {
-                company: String(formData.get("company") || "").trim(),
-                name: String(formData.get("name") || "").trim(),
-                contact: String(formData.get("contact") || "").trim(),
-                market: String(formData.get("market") || "").trim(),
-                message: String(formData.get("message") || "").trim()
-            };
+    const setFormStatus = (statusElement, message, type) => {
+        if (!statusElement) return;
+        statusElement.textContent = message;
+        statusElement.className = "form-status" + (type ? " is-" + type : "");
+    };
 
-            if (!payload.name || !payload.contact || !payload.market || !payload.message) {
-                if (contactStatus) {
-                    contactStatus.textContent = "请填写联系人、联系方式、目标市场和咨询需求";
-                    contactStatus.className = "form-status is-error";
-                }
+    const normalizeLeadPayload = (form) => {
+        const formData = new FormData(form);
+        return {
+            company: String(formData.get("company") || "").trim(),
+            name: String(formData.get("name") || "").trim(),
+            contact: String(formData.get("contact") || "").trim(),
+            business: String(formData.get("business") || formData.get("message") || "").trim(),
+            market: String(formData.get("market") || "").trim(),
+            stage: String(formData.get("stage") || "").trim(),
+            source: String(formData.get("source") || "官网").trim(),
+            pageUrl: window.location.href,
+            referrer: document.referrer || "",
+            website: String(formData.get("website") || "").trim()
+        };
+    };
+
+    contactForms.forEach((form) => {
+        const submit = form.querySelector("[data-contact-submit]") || form.querySelector("button[type='submit']");
+        const status = form.querySelector("[data-contact-status]");
+        const submitLabel = submit ? submit.textContent : "";
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            if (form.dataset.submitting === "true") return;
+
+            const payload = normalizeLeadPayload(form);
+            if (!payload.company || !payload.name || !payload.contact || !payload.business || !payload.market || !payload.stage || !payload.source) {
+                setFormStatus(status, "请完整填写公司名称、联系人、联系方式、业务情况、需求市场、当前阶段和来源渠道。", "error");
                 return;
             }
 
-            if (contactSubmit) {
-                contactSubmit.textContent = "打开邮件客户端...";
+            form.dataset.submitting = "true";
+            if (submit) {
+                submit.disabled = true;
+                submit.setAttribute("aria-busy", "true");
+                submit.textContent = "正在提交...";
             }
+            setFormStatus(status, "正在提交，请稍候。", "");
 
-            if (contactStatus) {
-                contactStatus.textContent = "正在打开邮件客户端，请确认发送咨询邮件。";
-                contactStatus.className = "form-status is-success";
-            }
+            try {
+                const response = await fetch("/api/leads", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || result.success !== true) {
+                    throw new Error(result.error || "提交失败，请稍后重试。");
+                }
 
-            window.location.href = buildConsultMailto(payload);
-
-            if (contactSubmit) {
-                window.setTimeout(() => {
-                    contactSubmit.textContent = contactSubmitLabel || "提交咨询";
-                }, 800);
+                form.reset();
+                setFormStatus(status, "提交成功，我们将在12小时内联系您。", "success");
+                showLeadSuccess();
+            } catch (error) {
+                setFormStatus(status, error.message || "提交失败，请稍后重试。", "error");
+            } finally {
+                form.dataset.submitting = "false";
+                if (submit) {
+                    submit.disabled = false;
+                    submit.removeAttribute("aria-busy");
+                    submit.textContent = submitLabel || "立即咨询";
+                }
             }
         });
-    }
+    });
 
     setHeaderState();
     window.addEventListener("scroll", setHeaderState, { passive: true });
