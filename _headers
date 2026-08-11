@@ -39,3 +39,13 @@
 
 /api/insights
   Cache-Control: no-store
+
+/api/collect-insights
+  Cache-Control: no-store
+
+/api/analyze-insight
+  Cache-Control: no-store
+
+/admin/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex, nofollow

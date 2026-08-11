@@ -85,8 +85,50 @@
 - `publish_date`
 - `update_date`
 - `status`
+- `ai_generated`
+- `review_status`
+- `impact_level`
+- `impact_score`
+- `business_score`
+- `content_score`
+- `total_score`
+- `source_url`
+- `source_published_date`
 
 当前与咨询线索系统共用 Cloudflare D1 数据库绑定，Functions 会优先读取 `INSIGHTS_DB`，未配置时回退到现有 `LEADS_DB`。
+
+AI 情报助手 V1 还会使用 `insight_sources` 表保存已采集的候选新闻源，用于后续追踪 RSS、新闻 API 或官方公告来源。
+
+## AI 情报助手 V1
+
+当前阶段不自动抓取新闻，也不自动公开发布。流程为：
+
+1. `/api/collect-insights` 接收新闻源数据并做关键词筛选。
+2. `/api/analyze-insight` 对候选新闻生成结构化情报草稿。
+3. AI 生成内容写入 `market_insights`，固定为 `status=draft`、`review_status=pending`、`ai_generated=1`。
+4. `/admin/insights/` 使用管理令牌查看、编辑、驳回、删除或通过发布。
+5. 通过发布后才会变为 `status=published`，进入公开 `/api/insights` 和情报中心内容体系。
+
+管理类接口需要 Cloudflare Pages 环境变量 `INSIGHTS_WRITE_TOKEN`。不要把该令牌写入代码或前端配置。
+
+### 默认关键词库
+
+维护文件：`config/intelligence-keywords.json`
+
+当前包含墨西哥、巴西和拉美三组关键词。Functions 内部也保留同版本关键词，用于在线筛选和评分。
+
+### 评分规则
+
+- 影响中国卖家：0-10
+- 商业价值：0-10
+- 内容价值：0-10
+
+综合评分：
+
+- S级：25-30
+- A级：18-24
+- B级：10-17
+- 低于10：忽略，不生成草稿
 
 ## API 预留
 
@@ -102,6 +144,36 @@
 `POST /api/insights`
 
 为未来 AI 生成文章、新闻采集和人工发布预留。当前必须配置 `INSIGHTS_WRITE_TOKEN` 才允许写入，未配置时返回预留提示，避免公网直接写库。
+
+`POST /api/collect-insights`
+
+接收新闻源数据结构：
+
+```json
+{
+  "title": "",
+  "source": "",
+  "url": "",
+  "country": "",
+  "category": "",
+  "published_date": ""
+}
+```
+
+`POST /api/analyze-insight`
+
+接收新闻标题、正文和来源信息，生成情报草稿：
+
+```json
+{
+  "title": "",
+  "summary": "",
+  "content": {},
+  "country": "",
+  "category": "",
+  "impact_level": ""
+}
+```
 
 ## 内容原则
 

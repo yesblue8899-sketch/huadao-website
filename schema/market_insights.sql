@@ -11,6 +11,15 @@ CREATE TABLE IF NOT EXISTS market_insights (
     publish_date TEXT NOT NULL,
     update_date TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
+    impact_level TEXT NOT NULL DEFAULT 'B',
+    impact_score INTEGER NOT NULL DEFAULT 0,
+    business_score INTEGER NOT NULL DEFAULT 0,
+    content_score INTEGER NOT NULL DEFAULT 0,
+    total_score INTEGER NOT NULL DEFAULT 0,
+    ai_generated INTEGER NOT NULL DEFAULT 0 CHECK (ai_generated IN (0, 1)),
+    review_status TEXT NOT NULL DEFAULT 'approved' CHECK (review_status IN ('pending', 'approved', 'rejected')),
+    source_url TEXT,
+    source_published_date TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -19,6 +28,31 @@ CREATE INDEX IF NOT EXISTS idx_market_insights_status_date ON market_insights (s
 CREATE INDEX IF NOT EXISTS idx_market_insights_country ON market_insights (country);
 CREATE INDEX IF NOT EXISTS idx_market_insights_category ON market_insights (category);
 CREATE INDEX IF NOT EXISTS idx_market_insights_slug ON market_insights (slug);
+CREATE INDEX IF NOT EXISTS idx_market_insights_review_status ON market_insights (review_status);
+CREATE INDEX IF NOT EXISTS idx_market_insights_impact_level ON market_insights (impact_level);
+
+CREATE TABLE IF NOT EXISTS insight_sources (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    source TEXT NOT NULL,
+    url TEXT NOT NULL UNIQUE,
+    country TEXT NOT NULL CHECK (country IN ('Mexico', 'Brazil', 'LATAM')),
+    category TEXT NOT NULL CHECK (category IN ('platform', 'tax', 'business', 'logistics', 'brand')),
+    published_date TEXT,
+    matched_keywords TEXT NOT NULL DEFAULT '[]',
+    impact_score INTEGER NOT NULL DEFAULT 0,
+    business_score INTEGER NOT NULL DEFAULT 0,
+    content_score INTEGER NOT NULL DEFAULT 0,
+    total_score INTEGER NOT NULL DEFAULT 0,
+    impact_level TEXT NOT NULL DEFAULT 'ignored',
+    status TEXT NOT NULL DEFAULT 'collected' CHECK (status IN ('collected', 'ignored', 'analyzed')),
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_insight_sources_status ON insight_sources (status);
+CREATE INDEX IF NOT EXISTS idx_insight_sources_country ON insight_sources (country);
+CREATE INDEX IF NOT EXISTS idx_insight_sources_impact_level ON insight_sources (impact_level);
 
 INSERT INTO market_insights (
     title,

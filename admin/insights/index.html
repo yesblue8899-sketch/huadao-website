@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <title>AI情报审核｜华道出海</title>
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="theme-color" content="#06192d">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.addon.css">
+</head>
+<body>
+    <header class="site-header" data-header>
+        <div class="container nav-container">
+            <a href="/" class="brand" aria-label="华道出海首页">
+                <span class="brand-cn">华道出海</span>
+                <span class="brand-en">HUADAO OVERSEAS</span>
+            </a>
+            <nav class="primary-nav admin-nav" aria-label="管理导航">
+                <a href="/insights/">情报中心</a>
+                <a href="/contact/">咨询线索入口</a>
+            </nav>
+            <a class="nav-cta" href="/assessment/">获取方案</a>
+        </div>
+    </header>
+
+    <main id="main" class="seo-page admin-insights-page">
+        <section class="seo-hero admin-hero">
+            <div class="container">
+                <div class="seo-hero-grid">
+                    <div class="seo-hero-copy">
+                        <p class="eyebrow">AI LATAM INTELLIGENCE</p>
+                        <h1>AI情报审核</h1>
+                        <p>用于查看 AI 生成的拉美市场情报草稿，人工确认后再发布到公开情报中心。</p>
+                    </div>
+                    <form class="admin-token-panel" data-admin-token-form>
+                        <label>
+                            <span>管理令牌</span>
+                            <input type="password" name="token" placeholder="输入 INSIGHTS_WRITE_TOKEN" autocomplete="off">
+                        </label>
+                        <button class="btn btn-primary" type="submit">加载草稿</button>
+                        <p data-admin-status></p>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="seo-section">
+            <div class="container admin-grid">
+                <section class="admin-panel">
+                    <div class="admin-panel-head">
+                        <div>
+                            <p class="eyebrow">DRAFT QUEUE</p>
+                            <h2>待审核情报</h2>
+                        </div>
+                        <button class="btn btn-secondary" type="button" data-refresh-drafts>刷新</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>标题</th>
+                                    <th>国家</th>
+                                    <th>分类</th>
+                                    <th>生成时间</th>
+                                    <th>影响等级</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody data-draft-list>
+                                <tr><td colspan="7">请输入管理令牌后加载草稿。</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="admin-panel admin-editor" data-editor hidden>
+                    <div class="admin-panel-head">
+                        <div>
+                            <p class="eyebrow">REVIEW</p>
+                            <h2>查看与编辑</h2>
+                        </div>
+                        <span data-editor-badge>draft</span>
+                    </div>
+                    <form class="seo-form" data-editor-form>
+                        <label>
+                            <span>Slug</span>
+                            <input name="slug" readonly>
+                        </label>
+                        <label>
+                            <span>标题</span>
+                            <input name="title">
+                        </label>
+                        <label>
+                            <span>摘要</span>
+                            <textarea name="summary" rows="4"></textarea>
+                        </label>
+                        <div class="admin-form-row">
+                            <label>
+                                <span>国家</span>
+                                <select name="country">
+                                    <option value="Mexico">Mexico</option>
+                                    <option value="Brazil">Brazil</option>
+                                    <option value="LATAM">LATAM</option>
+                                </select>
+                            </label>
+                            <label>
+                                <span>分类</span>
+                                <select name="category">
+                                    <option value="platform">platform</option>
+                                    <option value="tax">tax</option>
+                                    <option value="business">business</option>
+                                    <option value="logistics">logistics</option>
+                                    <option value="brand">brand</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="admin-form-row">
+                            <label>
+                                <span>影响等级</span>
+                                <input name="impact_level">
+                            </label>
+                            <label>
+                                <span>总分</span>
+                                <input name="total_score" type="number" min="0" max="30">
+                            </label>
+                        </div>
+                        <label>
+                            <span>正文 JSON</span>
+                            <textarea name="content" rows="12"></textarea>
+                        </label>
+                        <div class="admin-actions">
+                            <button class="btn btn-secondary" type="submit">保存草稿</button>
+                            <button class="btn btn-primary" type="button" data-publish>通过发布</button>
+                            <button class="btn btn-secondary" type="button" data-reject>驳回</button>
+                            <button class="btn btn-secondary admin-danger" type="button" data-delete>删除</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script>
+    (() => {
+        const tokenForm = document.querySelector("[data-admin-token-form]");
+        const status = document.querySelector("[data-admin-status]");
+        const list = document.querySelector("[data-draft-list]");
+        const refresh = document.querySelector("[data-refresh-drafts]");
+        const editor = document.querySelector("[data-editor]");
+        const editorForm = document.querySelector("[data-editor-form]");
+        const editorBadge = document.querySelector("[data-editor-badge]");
+        let token = window.localStorage.getItem("huadao_insights_admin_token") || "";
+        let selected = null;
+
+        if (token) tokenForm.elements.token.value = token;
+
+        const setStatus = (message, type = "") => {
+            status.textContent = message;
+            status.className = type;
+        };
+
+        const api = async (url, options = {}) => {
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token,
+                    ...(options.headers || {})
+                }
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || data.success !== true) {
+                throw new Error(data.error || "请求失败");
+            }
+            return data;
+        };
+
+        const renderRows = (items) => {
+            if (!items.length) {
+                list.innerHTML = '<tr><td colspan="7">暂无待审核草稿。</td></tr>';
+                return;
+            }
+            list.innerHTML = items.map((item) => `
+                <tr>
+                    <td><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.slug)}</small></td>
+                    <td>${escapeHtml(item.country)}</td>
+                    <td>${escapeHtml(item.category)}</td>
+                    <td>${escapeHtml(item.created_at || item.publish_date || "")}</td>
+                    <td><span class="admin-level">${escapeHtml(item.impact_level || "")}</span></td>
+                    <td>${escapeHtml(item.review_status || item.status)}</td>
+                    <td><button type="button" data-view="${escapeHtml(item.slug)}">查看</button></td>
+                </tr>
+            `).join("");
+        };
+
+        const loadDrafts = async () => {
+            if (!token) {
+                setStatus("请输入管理令牌。", "is-error");
+                return;
+            }
+            setStatus("正在加载...");
+            const data = await api("/api/insights?status=draft&limit=100&admin=1");
+            renderRows(data.insights || []);
+            setStatus("草稿已加载。", "is-success");
+        };
+
+        const openEditor = async (slug) => {
+            const data = await api("/api/insights?slug=" + encodeURIComponent(slug) + "&admin=1");
+            selected = data.insight;
+            editor.hidden = false;
+            editorBadge.textContent = `${selected.status} / ${selected.review_status}`;
+            editorForm.elements.slug.value = selected.slug;
+            editorForm.elements.title.value = selected.title;
+            editorForm.elements.summary.value = selected.summary;
+            editorForm.elements.country.value = selected.country;
+            editorForm.elements.category.value = selected.category;
+            editorForm.elements.impact_level.value = selected.impact_level || "";
+            editorForm.elements.total_score.value = selected.total_score || 0;
+            editorForm.elements.content.value = JSON.stringify(selected.content || {}, null, 2);
+        };
+
+        const currentPayload = () => {
+            let content = {};
+            try {
+                content = JSON.parse(editorForm.elements.content.value || "{}");
+            } catch (error) {
+                throw new Error("正文 JSON 格式不正确。");
+            }
+            return {
+                slug: editorForm.elements.slug.value,
+                title: editorForm.elements.title.value.trim(),
+                summary: editorForm.elements.summary.value.trim(),
+                country: editorForm.elements.country.value,
+                category: editorForm.elements.category.value,
+                impact_level: editorForm.elements.impact_level.value.trim(),
+                impact_score: selected?.impact_score || 0,
+                business_score: selected?.business_score || 0,
+                content_score: selected?.content_score || 0,
+                total_score: Number(editorForm.elements.total_score.value || 0),
+                content,
+                status: selected?.status || "draft",
+                review_status: selected?.review_status || "pending",
+                tags: selected?.tags || [],
+                source: selected?.source || "AI拉美市场情报助手",
+                ai_generated: true
+            };
+        };
+
+        tokenForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            token = tokenForm.elements.token.value.trim();
+            window.localStorage.setItem("huadao_insights_admin_token", token);
+            await loadDrafts().catch((error) => setStatus(error.message, "is-error"));
+        });
+
+        refresh.addEventListener("click", () => {
+            loadDrafts().catch((error) => setStatus(error.message, "is-error"));
+        });
+
+        list.addEventListener("click", (event) => {
+            const button = event.target.closest("[data-view]");
+            if (!button) return;
+            openEditor(button.dataset.view).catch((error) => setStatus(error.message, "is-error"));
+        });
+
+        editorForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            try {
+                const payload = currentPayload();
+                await api("/api/insights", { method: "PATCH", body: JSON.stringify({ ...payload, action: "update" }) });
+                setStatus("草稿已保存。", "is-success");
+                await loadDrafts();
+            } catch (error) {
+                setStatus(error.message, "is-error");
+            }
+        });
+
+        document.querySelector("[data-publish]").addEventListener("click", async () => {
+            if (!selected) return;
+            await api("/api/insights", { method: "PATCH", body: JSON.stringify({ slug: selected.slug, action: "publish" }) })
+                .then(loadDrafts)
+                .then(() => setStatus("已通过并发布。", "is-success"))
+                .catch((error) => setStatus(error.message, "is-error"));
+        });
+
+        document.querySelector("[data-reject]").addEventListener("click", async () => {
+            if (!selected) return;
+            await api("/api/insights", { method: "PATCH", body: JSON.stringify({ slug: selected.slug, action: "reject" }) })
+                .then(loadDrafts)
+                .then(() => setStatus("已驳回。", "is-success"))
+                .catch((error) => setStatus(error.message, "is-error"));
+        });
+
+        document.querySelector("[data-delete]").addEventListener("click", async () => {
+            if (!selected) return;
+            const confirmed = window.confirm("确认删除这条情报草稿？");
+            if (!confirmed) return;
+            await api("/api/insights?slug=" + encodeURIComponent(selected.slug), { method: "DELETE" })
+                .then(loadDrafts)
+                .then(() => {
+                    editor.hidden = true;
+                    selected = null;
+                    setStatus("已删除。", "is-success");
+                })
+                .catch((error) => setStatus(error.message, "is-error"));
+        });
+
+        const escapeHtml = (value) => String(value || "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;");
+    })();
+    </script>
+</body>
+</html>
