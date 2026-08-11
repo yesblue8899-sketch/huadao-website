@@ -2,6 +2,7 @@
 .chrome*/
 .chrome-*/
 screenshots/
+.wrangler/
 *.py
 
 # Pre-edit backups of pulled source
