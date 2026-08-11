@@ -111,6 +111,8 @@ AI 情报助手 V1 还会使用 `insight_sources` 表保存已采集的候选新
 
 管理类接口需要 Cloudflare Pages 环境变量 `INSIGHTS_WRITE_TOKEN`。不要把该令牌写入代码或前端配置。
 
+`/api/analyze-insight` 只在 Cloudflare Functions 服务端运行 AI 生成逻辑。如果未来为 Pages Functions 绑定 Cloudflare Workers AI（绑定名 `AI`），接口会优先调用该模型；未绑定时回退到服务端结构化草稿生成，仍然只写入 `draft`。
+
 ### 默认关键词库
 
 维护文件：`config/intelligence-keywords.json`

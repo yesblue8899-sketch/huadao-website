@@ -34,6 +34,80 @@ const normalizeDraft = (draft, item, score) => ({
     impact_level: score.impact_level
 });
 
+const extractJson = (value) => {
+    const text = String(value || "").trim();
+    if (!text) return null;
+    const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    const raw = fenced ? fenced[1] : text;
+    const start = raw.indexOf("{");
+    const end = raw.lastIndexOf("}");
+    if (start === -1 || end === -1 || end <= start) return null;
+
+    try {
+        return JSON.parse(raw.slice(start, end + 1));
+    } catch (error) {
+        return null;
+    }
+};
+
+const buildWorkersAiPrompt = (item, score) => `
+You are Huadao's LATAM market intelligence analyst.
+Generate a Chinese draft insight for Chinese companies entering Mexico, Brazil, or LATAM.
+Do not invent statistics, customers, policies, or news facts.
+Keep the draft suitable for human review before publishing.
+
+Return strict JSON only:
+{
+  "title": "",
+  "summary": "",
+  "content": {
+    "sections": {
+      "background": [],
+      "why": [],
+      "impact": [],
+      "observation": [],
+      "actions": []
+    }
+  }
+}
+
+News:
+Title: ${item.title}
+Source: ${item.source}
+URL: ${item.url}
+Published date: ${item.published_date}
+Country: ${score.country}
+Category: ${score.category}
+Matched keywords: ${score.matched_keywords.join(", ")}
+Scores: impact ${score.impact_score}, business ${score.business_score}, content ${score.content_score}, total ${score.total_score}, level ${score.impact_level}
+Content: ${item.content}
+`.trim();
+
+const buildProviderDraft = async (env, item, score) => {
+    if (!env.AI || typeof env.AI.run !== "function") return null;
+
+    try {
+        const model = env.INSIGHTS_AI_MODEL || "@cf/meta/llama-3.1-8b-instruct";
+        const response = await env.AI.run(model, {
+            messages: [
+                {
+                    role: "system",
+                    content: "Return only valid JSON. The article must stay draft-only and require human review."
+                },
+                {
+                    role: "user",
+                    content: buildWorkersAiPrompt(item, score)
+                }
+            ]
+        });
+        const text = response?.response || response?.text || response?.result || "";
+        const parsed = extractJson(typeof text === "string" ? text : JSON.stringify(text));
+        return parsed ? normalizeDraft(parsed, item, score) : null;
+    } catch (error) {
+        return null;
+    }
+};
+
 export async function onRequestGet() {
     return json({
         success: true,
@@ -55,6 +129,7 @@ export async function onRequestGet() {
             category: "platform | tax | business | logistics | brand",
             impact_level: "S | A | B | ignored"
         },
+        ai_provider: "Cloudflare Workers AI binding named AI is supported when configured; otherwise the Function uses server-side structured draft generation.",
         publishing_rule: "AI生成内容只保存为 draft，review_status 默认为 pending。"
     });
 }
@@ -91,7 +166,8 @@ export async function onRequestPost(context) {
         });
     }
 
-    const draft = normalizeDraft(buildDraftAnalysis(item, score), item, score);
+    const providerDraft = await buildProviderDraft(env, item, score);
+    const draft = providerDraft || normalizeDraft(buildDraftAnalysis(item, score), item, score);
     const slug = clean(payload.slug, 120) || buildDraftSlug(item, score);
     const today = new Date().toISOString().slice(0, 10);
     const publishDate = item.published_date || today;
