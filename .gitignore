@@ -4,6 +4,10 @@
 screenshots/
 .wrangler/
 *.py
+.env
+.env.*
+.dev.vars
+.dev.vars.*
 
 # Pre-edit backups of pulled source
 *.current.html

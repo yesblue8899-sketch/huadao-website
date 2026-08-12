@@ -1,3 +1,5 @@
+import { sendLeadNotifications } from "../_shared/lead-notifications.js";
+
 const MARKET_VALUES = new Set(["墨西哥", "巴西", "墨西哥+巴西", "其他市场"]);
 const STAGE_VALUES = new Set(["准备进入拉美", "已经有跨境店铺", "想升级本土店", "企业品牌出海"]);
 const SOURCE_VALUES = new Set(["官网", "抖音", "小红书", "公众号"]);
@@ -58,7 +60,7 @@ export async function onRequestPost(context) {
     }
 
     try {
-        await env.LEADS_DB.prepare(`
+        const result = await env.LEADS_DB.prepare(`
             INSERT INTO leads (
                 submitted_at,
                 company,
@@ -89,6 +91,30 @@ export async function onRequestPost(context) {
             lead.ip,
             "new"
         ).run();
+
+        const savedLead = {
+            ...lead,
+            id: result.meta?.last_row_id || result.lastRowId || result.last_row_id || ""
+        };
+        console.log(JSON.stringify({
+            event: "LEAD_SAVED",
+            lead_id: savedLead.id,
+            market: savedLead.market,
+            source_channel: savedLead.source_channel
+        }));
+
+        const notificationTask = sendLeadNotifications(savedLead, env);
+        if (context.waitUntil) {
+            context.waitUntil(notificationTask);
+        } else {
+            notificationTask.catch((error) => {
+                console.log(JSON.stringify({
+                    event: "LEAD_NOTIFICATION_FAILED",
+                    lead_id: savedLead.id,
+                    reason: error?.message || "notification task failed"
+                }));
+            });
+        }
 
         return json({ success: true });
     } catch (error) {
