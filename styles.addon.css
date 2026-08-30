@@ -3203,3 +3203,87 @@ body{
         height:260px;
     }
 }
+
+/* 视觉纠偏：白底与暖白底正文对比度 */
+.hero-lead,
+.section-title > p:not(.eyebrow),
+.seo-section-head p,
+.seo-section-head p:not(.eyebrow),
+.market-content p,
+.solution-card p,
+.conversion-card p,
+.reason-card p,
+.process-step p,
+.step-deliver,
+.trust-grid p,
+.service-grid p,
+.service-card p,
+.system-grid p,
+.scenario-fields dd,
+.seo-card p,
+.seo-faq p,
+.contact-panel p,
+.contact-methods p,
+.form-note,
+.assess-lead-note,
+.intel-feature-card p,
+.intel-article-card p,
+.intel-hot-card p,
+.intel-category-head p:not(.eyebrow),
+.intel-depth-list p,
+.lead-modal-panel p:not(.eyebrow),
+.consult-popover p{
+    color:#475569;
+}
+
+.market-content h3,
+.solution-card h3,
+.conversion-card h3,
+.reason-card h3,
+.process-step h3,
+.service-card h3,
+.seo-card h3,
+.contact-methods h3,
+.intel-feature-card h3,
+.intel-article-card h3,
+.intel-hot-card h3,
+.panel-step h2{
+    color:#0F172A;
+}
+
+.brand-en,
+.hero-metrics span,
+.tag-row span,
+.intel-card-meta time,
+.intel-feature-card time,
+.admin-table th,
+.admin-table td small,
+.lead-modal-close{
+    color:#64748B;
+}
+
+.company p,
+.company li,
+.home-cta-box > p:not(.eyebrow),
+.seo-cta-box > p:not(.eyebrow),
+.contact-box > p:not(.eyebrow),
+.trust-strip-item p,
+.insights-entry-card p,
+.module-list a,
+.scenario-stage,
+.intel-hero-panel p,
+.intel-feature-card.is-primary time,
+.intel-card-meta.is-hero time,
+.intel-update,
+.intel-hero-metrics span,
+.article-intel-meta span,
+.admin-token-panel label,
+.admin-token-panel p{
+    color:#D7DEE8;
+}
+
+.site-footer,
+.site-footer p,
+.site-footer a{
+    color:#D7DEE8;
+}
