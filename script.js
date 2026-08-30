@@ -20,6 +20,21 @@
         toggle.setAttribute("aria-label", "打开导航菜单");
     };
 
+    if (navLinks.length) {
+        const currentPath = window.location.pathname.replace(/\/index\.html$/, "/");
+        navLinks.forEach((link) => {
+            const href = link.getAttribute("href") || "";
+            if (href.startsWith("#")) return;
+            const linkPath = new URL(href, window.location.origin).pathname;
+            const isCurrent = currentPath === linkPath ||
+                (currentPath.startsWith("/insights/") && linkPath === "/insights/") ||
+                (currentPath.startsWith("/solutions/") && linkPath === "/solutions/") ||
+                ((currentPath.startsWith("/mexico/") || currentPath.startsWith("/brazil/")) && linkPath === "/mexico/") ||
+                (currentPath.startsWith("/contact/") && linkPath === "/contact/");
+            if (isCurrent) link.setAttribute("aria-current", "page");
+        });
+    }
+
     if (toggle && nav) {
         toggle.addEventListener("click", () => {
             const isOpen = toggle.classList.toggle("is-open");
