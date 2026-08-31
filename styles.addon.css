@@ -2741,7 +2741,7 @@ body{
     min-height:420px;
     background:
         linear-gradient(180deg, rgba(15,23,42,.08), rgba(15,23,42,.18)),
-        url("/assets/images/brazil-business-1200.jpg") center/cover no-repeat;
+        url("/images/brazil-business01.jpg") center/cover no-repeat;
     border-radius:20px;
     clip-path:polygon(9% 0, 100% 0, 100% 100%, 0 100%, 0 11%);
     box-shadow:0 20px 52px rgba(15,23,42,.12);
@@ -3286,4 +3286,58 @@ body{
 .site-footer p,
 .site-footer a{
     color:#D7DEE8;
+}
+
+/* Final readability guard: keep light-surface body copy dark after all theme overrides. */
+.company .service-grid article p,
+.service-grid article p,
+.market-card .market-content p,
+.solution-card p,
+.case-card p,
+.reason-card p,
+.conversion-card p,
+.process-step p,
+.trust-grid article p,
+.system-grid article p,
+.seo-card p,
+.seo-richtext p,
+.seo-section-head > p:not(.eyebrow),
+.seo-hero-copy p:not(.eyebrow),
+.contact-page .contact-panel p,
+.contact-page .contact-methods p,
+.contact-page .seo-form label,
+.contact-page .form-note,
+.assess-self p,
+.assess-lead p,
+.assess-lead-note,
+.module-block p,
+.intel-article-card p,
+.intel-feature-card p,
+.intel-hot-card:not(.is-primary) p,
+.intel-watch-panel p,
+.intel-depth-list p,
+.insights-entry-card p{
+    color:#475569 !important;
+    opacity:1 !important;
+}
+
+.company .service-grid article h3,
+.service-grid article h3,
+.market-card .market-content h3,
+.solution-card h3,
+.case-card h3,
+.reason-card h3,
+.conversion-card h3,
+.process-step h3,
+.trust-grid article h3,
+.system-grid article h3,
+.seo-card h3,
+.contact-page .contact-methods h3,
+.module-block h3,
+.intel-article-card h3,
+.intel-feature-card h3,
+.intel-hot-card:not(.is-primary) h3,
+.insights-entry-card h3{
+    color:#0F172A !important;
+    opacity:1 !important;
 }
