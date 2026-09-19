@@ -3341,3 +3341,230 @@ body{
     color:#0F172A !important;
     opacity:1 !important;
 }
+
+/* Argentina expansion: keep existing Mexico/Brazil imagery and add a licensed-safe market visual. */
+.hero-countries{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:22px;
+}
+
+.country-pill{
+    display:inline-flex;
+    align-items:center;
+    min-height:38px;
+    padding:8px 12px;
+    color:#0F172A;
+    background:#FFFFFF;
+    border:1px solid var(--color-border);
+    border-radius:999px;
+    box-shadow:0 10px 24px rgba(15,23,42,.06);
+    font-size:14px;
+    font-weight:700;
+    text-decoration:none;
+}
+
+.country-pill:hover,
+.country-pill:focus-visible{
+    color:var(--color-primary);
+    border-color:rgba(255,140,26,.36);
+}
+
+.intel-filter-section{
+    padding:52px 0;
+    background:var(--color-bg);
+}
+
+.intel-filter-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.intel-filter-tags a{
+    display:inline-flex;
+    align-items:center;
+    min-height:38px;
+    padding:8px 12px;
+    color:#0F172A;
+    background:#FFFFFF;
+    border:1px solid var(--color-border);
+    border-radius:999px;
+    font-size:14px;
+    font-weight:700;
+    text-decoration:none;
+}
+
+.intel-filter-tags a:hover,
+.intel-filter-tags a:focus-visible{
+    color:var(--color-primary);
+    border-color:rgba(255,140,26,.36);
+}
+
+.intel-watch-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+.market-grid-three{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:24px;
+}
+
+.argentina-market-visual{
+    position:relative;
+    min-height:340px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:28px;
+    color:#FFFFFF;
+    background:
+        linear-gradient(135deg, rgba(15,23,42,.92), rgba(25,63,116,.88)),
+        linear-gradient(135deg, #75AADB 0%, #FFFFFF 48%, #75AADB 100%);
+    overflow:hidden;
+}
+
+.argentina-market-visual::before{
+    content:"";
+    position:absolute;
+    inset:28px;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:18px;
+}
+
+.argentina-market-visual::after{
+    content:"";
+    position:absolute;
+    right:-48px;
+    top:-48px;
+    width:180px;
+    height:180px;
+    border:34px solid rgba(255,140,26,.22);
+    border-radius:50%;
+}
+
+.argentina-flag-band{
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(180deg, rgba(117,170,219,.30) 0 33%, rgba(255,255,255,.18) 33% 66%, rgba(117,170,219,.30) 66% 100%);
+    mix-blend-mode:screen;
+}
+
+.argentina-market-visual span,
+.argentina-market-visual strong,
+.argentina-market-visual p{
+    position:relative;
+    z-index:1;
+}
+
+.argentina-market-visual span{
+    width:max-content;
+    margin-bottom:72px;
+    padding:8px 12px;
+    color:#0F172A;
+    background:#FFFFFF;
+    border-radius:10px;
+    font-size:18px;
+    font-weight:900;
+}
+
+.argentina-market-visual strong{
+    font-size:34px;
+    line-height:1;
+    letter-spacing:0;
+}
+
+.argentina-market-visual p{
+    max-width:300px;
+    margin-top:12px;
+    color:rgba(255,255,255,.82);
+    font-size:14px;
+    line-height:1.6;
+}
+
+.argentina-hero-card{
+    min-height:430px;
+}
+
+.argentina-hero-card::before{
+    z-index:0;
+}
+
+.argentina-hero-card .argentina-market-visual{
+    position:relative;
+    z-index:1;
+    min-height:430px;
+    border-radius:16px;
+    clip-path:polygon(8% 0, 100% 0, 100% 100%, 0 100%, 0 10%);
+    box-shadow:0 20px 52px rgba(15,23,42,.12);
+}
+
+.argentina-market-visual-large strong{
+    font-size:44px;
+}
+
+.seo-steps-six{
+    grid-template-columns:repeat(6,minmax(0,1fr));
+}
+
+@media (max-width:1180px){
+    .market-grid-three,
+    .intel-watch-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .seo-steps-six{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+}
+
+@media (max-width:900px){
+    .module-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media (max-width:768px){
+    .hero-countries{
+        margin-top:18px;
+    }
+
+    .country-pill{
+        flex:1 1 calc(50% - 10px);
+        justify-content:center;
+    }
+
+    .market-grid-three,
+    .intel-watch-grid,
+    .seo-steps-six{
+        grid-template-columns:1fr;
+    }
+
+    .argentina-market-visual,
+    .argentina-hero-card .argentina-market-visual{
+        min-height:260px;
+        padding:22px;
+        clip-path:polygon(6% 0, 100% 0, 100% 100%, 0 100%, 0 8%);
+    }
+
+    .argentina-hero-card{
+        min-height:260px;
+    }
+
+    .argentina-market-visual span{
+        margin-bottom:44px;
+    }
+
+    .argentina-market-visual strong,
+    .argentina-market-visual-large strong{
+        font-size:30px;
+    }
+}
+
+@media (max-width:430px){
+    .country-pill{
+        flex-basis:100%;
+    }
+}

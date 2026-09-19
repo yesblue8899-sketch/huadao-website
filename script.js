@@ -29,7 +29,7 @@
             const isCurrent = currentPath === linkPath ||
                 (currentPath.startsWith("/insights/") && linkPath === "/insights/") ||
                 (currentPath.startsWith("/solutions/") && linkPath === "/solutions/") ||
-                ((currentPath.startsWith("/mexico/") || currentPath.startsWith("/brazil/")) && linkPath === "/mexico/") ||
+                ((currentPath.startsWith("/mexico/") || currentPath.startsWith("/brazil/") || currentPath.startsWith("/argentina/")) && linkPath === "/mexico/") ||
                 (currentPath.startsWith("/contact/") && linkPath === "/contact/");
             if (isCurrent) link.setAttribute("aria-current", "page");
         });
@@ -194,7 +194,7 @@
         supply: "供应链企业",
         other: "其他 / 工贸企业"
     };
-    const marketLabel = { mx: "墨西哥", br: "巴西", both: "墨西哥 + 巴西" };
+    const marketLabel = { mx: "墨西哥", br: "巴西", ar: "阿根廷", latam: "拉美核心市场" };
     const stageLabel = {
         research: "仅调研阶段",
         prepare: "准备开店",
@@ -204,7 +204,8 @@
     const pathByMarket = {
         mx: "墨西哥 SA 主体设立 → RFC 税号申请 → 美客多 / TikTok Shop 本土店入驻 → 财税合规托管",
         br: "巴西 CNPJ 主体登记 → 税务（ICMS / IPI）衔接 → 本土平台入驻 → 合规与资料维护",
-        both: "墨西哥 SA + 巴西 CNPJ 双主体 → 两国税号与平台资质 → 统一财税合规与履约协同"
+        ar: "阿根廷市场进入评估 → 企业主体与税务登记路径判断 → 平台/业务资料准备 → 本土经营支持",
+        latam: "墨西哥 · 巴西 · 阿根廷市场优先级评估 → 主体与税务路径规划 → 平台/业务衔接 → 长期合规经营"
     };
     const stageNote = {
         research: "建议从本地主体设立与税号起步，先把合规底座打好。",

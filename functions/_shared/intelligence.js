@@ -1,16 +1,17 @@
-export const COUNTRY_VALUES = new Set(["Mexico", "Brazil", "LATAM"]);
+export const COUNTRY_VALUES = new Set(["Mexico", "Brazil", "Argentina", "LATAM"]);
 export const CATEGORY_VALUES = new Set(["platform", "tax", "business", "logistics", "brand"]);
 
 export const COUNTRY_LABELS = {
     Mexico: "墨西哥",
     Brazil: "巴西",
+    Argentina: "阿根廷",
     LATAM: "拉美"
 };
 
 export const CATEGORY_LABELS = {
     platform: "平台动态",
-    tax: "税务合规",
-    business: "商业环境",
+    tax: "财税政策",
+    business: "企业出海",
     logistics: "供应链与物流",
     brand: "品牌本地化"
 };
@@ -34,6 +35,14 @@ export const KEYWORD_LIBRARY = {
         "ICMS",
         "CBS",
         "IBS"
+    ],
+    Argentina: [
+        "Mercado Libre Argentina",
+        "Argentina ecommerce",
+        "Argentina tax",
+        "ARCA Argentina",
+        "AFIP Argentina",
+        "CUIT Argentina"
     ],
     LATAM: [
         "LATAM ecommerce",
@@ -95,6 +104,7 @@ export const inferCountry = (item) => {
     const text = lower(`${item.title} ${item.source} ${item.url} ${item.content}`);
     if (text.includes("brazil") || text.includes("brasil") || text.includes("cnpj") || text.includes("icms")) return "Brazil";
     if (text.includes("mexico") || text.includes("méxico") || text.includes("rfc") || text.includes("sat mexico")) return "Mexico";
+    if (text.includes("argentina") || text.includes("arca argentina") || text.includes("afip argentina") || text.includes("cuit argentina")) return "Argentina";
     return "LATAM";
 };
 

@@ -52,7 +52,7 @@ const extractJson = (value) => {
 
 const buildWorkersAiPrompt = (item, score) => `
 You are Huadao's LATAM market intelligence analyst.
-Generate a Chinese draft insight for Chinese companies entering Mexico, Brazil, or LATAM.
+Generate a Chinese draft insight for Chinese companies entering Mexico, Brazil, Argentina, or LATAM.
 Do not invent statistics, customers, policies, or news facts.
 Keep the draft suitable for human review before publishing.
 
@@ -125,7 +125,7 @@ export async function onRequestGet() {
                     actions: []
                 }
             },
-            country: "Mexico | Brazil | LATAM",
+            country: "Mexico | Brazil | Argentina | LATAM",
             category: "platform | tax | business | logistics | brand",
             impact_level: "S | A | B | ignored"
         },

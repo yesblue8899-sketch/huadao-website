@@ -1,6 +1,6 @@
 import { sendLeadNotifications } from "../_shared/lead-notifications.js";
 
-const MARKET_VALUES = new Set(["墨西哥", "巴西", "墨西哥+巴西", "其他市场"]);
+const MARKET_VALUES = new Set(["墨西哥", "巴西", "阿根廷", "墨西哥+巴西", "其他拉美市场", "其他市场"]);
 const STAGE_VALUES = new Set(["准备进入拉美", "已经有跨境店铺", "想升级本土店", "企业品牌出海"]);
 const SOURCE_VALUES = new Set(["官网", "抖音", "小红书", "公众号"]);
 

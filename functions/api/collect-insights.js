@@ -34,7 +34,7 @@ export async function onRequestGet() {
             title: "",
             source: "",
             url: "",
-            country: "Mexico | Brazil | LATAM",
+            country: "Mexico | Brazil | Argentina | LATAM",
             category: "platform | tax | business | logistics | brand",
             published_date: "YYYY-MM-DD"
         },

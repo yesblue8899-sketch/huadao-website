@@ -37,6 +37,9 @@
 /brazil-market-entry/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/argentina/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /contact/*
   Cache-Control: public, max-age=0, must-revalidate
 

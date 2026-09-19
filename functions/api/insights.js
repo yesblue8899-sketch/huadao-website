@@ -370,7 +370,7 @@ function validateInsight(insight) {
         return json({ success: false, error: "请填写标题、slug、摘要和正文内容。" }, 400);
     }
     if (!COUNTRY_VALUES.has(insight.country)) {
-        return json({ success: false, error: "country 必须为 Mexico、Brazil 或 LATAM。" }, 400);
+        return json({ success: false, error: "country 必须为 Mexico、Brazil、Argentina 或 LATAM。" }, 400);
     }
     if (!CATEGORY_VALUES.has(insight.category)) {
         return json({ success: false, error: "category 必须为 platform、tax、business、logistics 或 brand。" }, 400);
