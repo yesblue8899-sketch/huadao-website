@@ -53,19 +53,42 @@
     }
 
     if (consultToggle && consultPopover) {
+        const closeConsult = () => {
+            consultPopover.hidden = true;
+            consultToggle.setAttribute("aria-expanded", "false");
+        };
+
+        const openConsult = () => {
+            consultPopover.hidden = false;
+            consultToggle.setAttribute("aria-expanded", "true");
+        };
+
+        consultToggle.setAttribute("aria-expanded", "false");
         consultToggle.addEventListener("click", (event) => {
             event.stopPropagation();
-            consultPopover.hidden = !consultPopover.hidden;
+            if (consultPopover.hidden) {
+                openConsult();
+            } else {
+                closeConsult();
+            }
+        });
+
+        consultPopover.querySelectorAll("[data-consult-close]").forEach((button) => {
+            button.addEventListener("click", closeConsult);
+        });
+
+        consultPopover.querySelectorAll("[data-consult-anchor]").forEach((link) => {
+            link.addEventListener("click", closeConsult);
         });
 
         document.addEventListener("click", (event) => {
             if (!consultPopover.hidden && !consultPopover.contains(event.target) && !consultToggle.contains(event.target)) {
-                consultPopover.hidden = true;
+                closeConsult();
             }
         });
 
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") consultPopover.hidden = true;
+            if (event.key === "Escape") closeConsult();
         });
     }
 
@@ -136,8 +159,8 @@
             if (form.dataset.submitting === "true") return;
 
             const payload = normalizeLeadPayload(form);
-            if (!payload.company || !payload.name || !payload.contact || !payload.business || !payload.market || !payload.stage || !payload.source) {
-                setFormStatus(status, "请完整填写公司名称、联系人、联系方式、业务情况、需求市场、当前阶段和来源渠道。", "error");
+            if (!payload.name || !payload.contact || !payload.business || !payload.market || !payload.stage || !payload.source) {
+                setFormStatus(status, "请完整填写联系人、联系方式、业务情况、需求市场、当前阶段和来源渠道。", "error");
                 return;
             }
 
@@ -165,11 +188,17 @@
                 form.reset();
                 setFormStatus(status, "提交成功，我们将在12小时内联系您。", "success");
                 showLeadSuccess();
+                if (submit) {
+                    submit.disabled = true;
+                    submit.removeAttribute("aria-busy");
+                    submit.setAttribute("aria-disabled", "true");
+                    submit.textContent = "已提交";
+                }
             } catch (error) {
                 setFormStatus(status, error.message || "提交失败，请稍后重试。", "error");
             } finally {
                 form.dataset.submitting = "false";
-                if (submit) {
+                if (submit && submit.textContent !== "已提交") {
                     submit.disabled = false;
                     submit.removeAttribute("aria-busy");
                     submit.textContent = submitLabel || "立即咨询";

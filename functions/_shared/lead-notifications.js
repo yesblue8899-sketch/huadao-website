@@ -31,37 +31,47 @@ const formatChinaTime = (value) => {
 };
 
 const leadId = (lead) => lead.id || "pending";
+const display = (value, max = 300) => clean(value, max) || "未填写";
 
 const buildLeadText = (lead) => [
-    "【官网新客户咨询】",
+    "【华道出海｜官网新增客户咨询】",
+    "",
+    `公司名称：${display(lead.company, 120)}`,
+    `联系人：${display(lead.contact_name, 80)}`,
+    `联系方式：${display(lead.contact_method, 120)}`,
+    "",
+    `目标市场：${display(lead.market, 40)}`,
+    `当前阶段：${display(lead.stage, 40)}`,
+    "",
+    "当前业务情况：",
+    display(lead.business_status, 1200),
+    "",
+    `来源渠道：${display(lead.source_channel, 20)}`,
     "",
     `提交时间：${formatChinaTime(lead.submitted_at)}`,
-    `公司名称：${clean(lead.company, 120)}`,
-    `联系人：${clean(lead.contact_name, 80)}`,
-    `联系方式：${clean(lead.contact_method, 120)}`,
-    `目标市场：${clean(lead.market, 40)}`,
-    `当前阶段：${clean(lead.stage, 40)}`,
-    `当前业务情况：${clean(lead.business_status, 1200)}`,
-    `来源渠道：${clean(lead.source_channel, 20)}`,
-    `线索ID：${leadId(lead)}`
+    "线索来源：华道出海官网",
+    "",
+    "请及时跟进该客户。"
 ].join("\n");
 
 const buildLeadHtml = (lead) => `
 <!doctype html>
 <html lang="zh-CN">
 <body style="font-family:Arial,'Microsoft YaHei',sans-serif;color:#12233d;line-height:1.7;">
-  <h2 style="margin:0 0 16px;color:#0b1f3a;">官网新客户咨询</h2>
+  <h2 style="margin:0 0 16px;color:#0b1f3a;">华道出海｜官网新增客户咨询</h2>
   <table cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;max-width:720px;">
-    <tr><td style="font-weight:700;background:#f4f7fb;width:140px;">提交时间</td><td>${escapeHtml(formatChinaTime(lead.submitted_at))}</td></tr>
-    <tr><td style="font-weight:700;background:#f4f7fb;">公司名称</td><td>${escapeHtml(lead.company)}</td></tr>
-    <tr><td style="font-weight:700;background:#f4f7fb;">联系人</td><td>${escapeHtml(lead.contact_name)}</td></tr>
-    <tr><td style="font-weight:700;background:#f4f7fb;">联系方式</td><td>${escapeHtml(lead.contact_method)}</td></tr>
-    <tr><td style="font-weight:700;background:#f4f7fb;">目标市场</td><td>${escapeHtml(lead.market)}</td></tr>
-    <tr><td style="font-weight:700;background:#f4f7fb;">当前阶段</td><td>${escapeHtml(lead.stage)}</td></tr>
-    <tr><td style="font-weight:700;background:#f4f7fb;">业务情况</td><td>${escapeHtml(lead.business_status)}</td></tr>
-    <tr><td style="font-weight:700;background:#f4f7fb;">来源渠道</td><td>${escapeHtml(lead.source_channel)}</td></tr>
+    <tr><td style="font-weight:700;background:#f4f7fb;width:140px;">公司名称</td><td>${escapeHtml(display(lead.company, 120))}</td></tr>
+    <tr><td style="font-weight:700;background:#f4f7fb;">联系人</td><td>${escapeHtml(display(lead.contact_name, 80))}</td></tr>
+    <tr><td style="font-weight:700;background:#f4f7fb;">联系方式</td><td>${escapeHtml(display(lead.contact_method, 120))}</td></tr>
+    <tr><td style="font-weight:700;background:#f4f7fb;">目标市场</td><td>${escapeHtml(display(lead.market, 40))}</td></tr>
+    <tr><td style="font-weight:700;background:#f4f7fb;">当前阶段</td><td>${escapeHtml(display(lead.stage, 40))}</td></tr>
+    <tr><td style="font-weight:700;background:#f4f7fb;">当前业务情况</td><td>${escapeHtml(display(lead.business_status, 1200))}</td></tr>
+    <tr><td style="font-weight:700;background:#f4f7fb;">来源渠道</td><td>${escapeHtml(display(lead.source_channel, 20))}</td></tr>
+    <tr><td style="font-weight:700;background:#f4f7fb;">提交时间</td><td>${escapeHtml(formatChinaTime(lead.submitted_at))}</td></tr>
+    <tr><td style="font-weight:700;background:#f4f7fb;">线索来源</td><td>华道出海官网</td></tr>
     <tr><td style="font-weight:700;background:#f4f7fb;">线索ID</td><td>${escapeHtml(leadId(lead))}</td></tr>
   </table>
+  <p style="margin-top:16px;">请及时跟进该客户。</p>
 </body>
 </html>
 `.trim();

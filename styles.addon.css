@@ -4067,3 +4067,110 @@ body{
         font-size:16px;
     }
 }
+
+/* WeChat consultation popover */
+.consult-popover{
+    width:min(340px, calc(100vw - 32px));
+    padding:22px;
+    border-radius:20px;
+    box-shadow:0 24px 70px rgba(15,23,42,.22);
+}
+
+.consult-popover-close{
+    position:absolute;
+    top:12px;
+    right:12px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    color:#64748B;
+    background:#F8FAFC;
+    border:1px solid #E2E8F0;
+    border-radius:50%;
+    font-size:22px;
+    line-height:1;
+    cursor:pointer;
+}
+
+.consult-popover-close:hover,
+.consult-popover-close:focus-visible{
+    color:#0F172A;
+    border-color:rgba(255,140,26,.42);
+}
+
+.consult-popover > strong{
+    margin:0 36px 6px 0;
+    color:#0F172A;
+    font-size:20px;
+    line-height:1.35;
+}
+
+.consult-popover .consult-popover-subtitle{
+    margin:0;
+    color:#475569;
+    font-size:15px;
+    line-height:1.6;
+}
+
+.consult-qr{
+    display:block;
+    width:min(300px, 100%);
+    height:auto;
+    margin:16px auto;
+    background:#fff;
+    border:1px solid #EEF2F7;
+    border-radius:14px;
+}
+
+.consult-popover-meta{
+    display:grid;
+    gap:8px;
+    margin:0 0 18px;
+    padding:14px;
+    background:#FFF7EE;
+    border:1px solid rgba(255,140,26,.18);
+    border-radius:14px;
+}
+
+.consult-popover .consult-popover-meta p{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin:0;
+    color:#475569;
+    font-size:14px;
+    line-height:1.45;
+}
+
+.consult-popover-meta span{
+    color:#64748B;
+}
+
+.consult-popover-meta b{
+    color:#0F172A;
+    font-weight:800;
+}
+
+.consult-popover-action{
+    width:100%;
+    justify-content:center;
+}
+
+@media (max-width:768px){
+    .consult-popover{
+        right:14px;
+        bottom:calc(76px + env(safe-area-inset-bottom));
+        width:min(320px, calc(100vw - 28px));
+        max-height:calc(100vh - 104px);
+        padding:18px;
+        overflow:auto;
+    }
+
+    .consult-qr{
+        width:min(280px, 100%);
+        margin:14px auto;
+    }
+}

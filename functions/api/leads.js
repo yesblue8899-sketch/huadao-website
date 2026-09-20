@@ -1,8 +1,9 @@
 import { sendLeadNotifications } from "../_shared/lead-notifications.js";
 
 const MARKET_VALUES = new Set(["墨西哥", "巴西", "阿根廷", "墨西哥+巴西", "其他拉美市场", "其他市场"]);
-const STAGE_VALUES = new Set(["准备进入拉美", "已经有跨境店铺", "想升级本土店", "企业品牌出海"]);
-const SOURCE_VALUES = new Set(["官网", "抖音", "小红书", "公众号"]);
+const STAGE_VALUES = new Set(["准备进入拉美", "已经有跨境店铺", "想升级本土店", "企业品牌出海", "测试"]);
+const SOURCE_VALUES = new Set(["官网", "抖音", "小红书", "公众号", "其他"]);
+const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
     status,
@@ -30,7 +31,7 @@ export async function onRequestPost(context) {
 
     const lead = {
         submitted_at: new Date().toISOString(),
-        company: clean(payload.company, 120),
+        company: clean(payload.company, 120) || "未填写",
         contact_name: clean(payload.name, 80),
         contact_method: clean(payload.contact, 120),
         business_status: clean(payload.business, 1200),
@@ -43,8 +44,11 @@ export async function onRequestPost(context) {
         ip: clean(request.headers.get("CF-Connecting-IP"), 80)
     };
 
-    if (!lead.company || !lead.contact_name || !lead.contact_method || !lead.business_status) {
-        return json({ success: false, error: "请完整填写公司名称、联系人、联系方式和当前业务情况。" }, 400);
+    if (!lead.contact_name || !lead.contact_method || !lead.business_status) {
+        return json({ success: false, error: "请完整填写联系人、联系方式和当前业务情况。" }, 400);
+    }
+    if (lead.contact_method.length < 3) {
+        return json({ success: false, error: "请填写有效的微信、电话或邮箱。" }, 400);
     }
     if (!MARKET_VALUES.has(lead.market)) {
         return json({ success: false, error: "请选择想了解的市场。" }, 400);
@@ -60,6 +64,33 @@ export async function onRequestPost(context) {
     }
 
     try {
+        const duplicateSince = new Date(Date.now() - DUPLICATE_WINDOW_MS).toISOString();
+        const duplicate = await env.LEADS_DB.prepare(`
+            SELECT id, submitted_at
+            FROM leads
+            WHERE contact_method = ?
+              AND business_status = ?
+              AND market = ?
+              AND submitted_at >= ?
+            ORDER BY id DESC
+            LIMIT 1
+        `).bind(
+            lead.contact_method,
+            lead.business_status,
+            lead.market,
+            duplicateSince
+        ).first();
+
+        if (duplicate) {
+            console.log(JSON.stringify({
+                event: "LEAD_DUPLICATE_SKIPPED",
+                lead_id: duplicate.id,
+                market: lead.market,
+                source_channel: lead.source_channel
+            }));
+            return json({ success: true, duplicate: true, leadId: duplicate.id });
+        }
+
         const result = await env.LEADS_DB.prepare(`
             INSERT INTO leads (
                 submitted_at,
@@ -116,7 +147,7 @@ export async function onRequestPost(context) {
             });
         }
 
-        return json({ success: true });
+        return json({ success: true, leadId: savedLead.id });
     } catch (error) {
         return json({ success: false, error: "提交失败，请稍后重试。" }, 500);
     }
