@@ -1132,33 +1132,40 @@ ul{
 .consult-popover{
     position:fixed;
     right:24px;
-    bottom:88px;
+    bottom:82px;
     z-index:999;
-    width:260px;
-    padding:20px;
+    width:248px;
+    padding:14px;
     color:var(--color-text);
     background:var(--color-white);
     border:1px solid var(--color-border);
-    border-radius:var(--radius);
+    border-radius:16px;
     box-shadow:0 22px 52px rgba(15,23,42,.18);
-}
-
-.consult-popover strong{
-    display:block;
-    margin-bottom:12px;
-    color:var(--color-navy-900);
-    font-size:17px;
-    font-weight:900;
-}
-
-.consult-popover p{
-    color:var(--color-muted);
-    font-size:15px;
-    line-height:1.8;
+    transform-origin:right bottom;
+    animation:consult-popover-in .18s ease-out both;
 }
 
 .consult-popover[hidden]{
     display:none;
+}
+
+.consult-qr{
+    display:block;
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    border-radius:10px;
+}
+
+@keyframes consult-popover-in{
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
 .seo-page{
@@ -2129,8 +2136,9 @@ ul{
 
     .consult-popover{
         right:16px;
-        bottom:76px;
-        width:min(280px, calc(100vw - 32px));
+        bottom:calc(78px + env(safe-area-inset-bottom));
+        width:min(240px, calc(100vw - 32px));
+        padding:12px;
     }
 
     .seo-hero{
