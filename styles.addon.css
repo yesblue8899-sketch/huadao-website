@@ -3596,8 +3596,9 @@ body{
     object-position:center;
 }
 
-.market-grid-three .market-card:nth-child(2) img{
-    object-position:70% center;
+.market-card img.market-image--brazil{
+    object-fit:cover;
+    object-position:left center;
 }
 
 .latam-comparison{
