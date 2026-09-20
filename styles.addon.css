@@ -3867,3 +3867,195 @@ body{
         padding-top:24px;
     }
 }
+
+/* Local layout tune: process, service and resource card modules only. */
+.entry-process .process-grid-six{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-auto-rows:1fr;
+    gap:24px;
+    max-width:1120px;
+    margin-inline:auto;
+}
+
+.entry-process .process-step{
+    display:flex;
+    min-height:214px;
+    height:100%;
+    flex-direction:column;
+    padding:32px 30px;
+}
+
+.entry-process .process-step::after{
+    display:none;
+}
+
+.entry-process .process-step span{
+    font-size:34px;
+    line-height:1;
+}
+
+.entry-process .process-step h3{
+    margin-top:24px;
+}
+
+.entry-process .process-step .step-deliver{
+    margin-top:14px;
+}
+
+@media (min-width:1181px){
+    .entry-process .process-grid-six .process-step:not(:nth-child(3n))::after{
+        display:block;
+        top:50%;
+        right:-24px;
+        width:24px;
+        height:1px;
+        background:rgba(255,140,26,.42);
+        transform:translateY(-50%);
+        pointer-events:none;
+    }
+}
+
+.company .service-box{
+    max-width:1230px;
+}
+
+.company .service-box .service-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-auto-rows:1fr;
+    gap:24px;
+}
+
+.company .service-grid article{
+    display:flex;
+    min-height:224px;
+    height:100%;
+    flex-direction:column;
+    justify-content:flex-start;
+    padding:34px 32px;
+}
+
+.company .service-grid article > span{
+    width:58px;
+    height:58px;
+    margin-bottom:26px;
+    font-size:21px;
+}
+
+.company .service-grid h3{
+    font-size:27px;
+    line-height:1.32;
+}
+
+.company .service-grid article p{
+    margin-top:16px;
+    font-size:18px;
+    line-height:1.65;
+}
+
+.team .solution-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-auto-rows:1fr;
+    gap:22px;
+}
+
+.team .solution-card{
+    display:flex;
+    min-height:274px;
+    height:100%;
+    flex-direction:column;
+    padding:28px;
+}
+
+.team .solution-card > span{
+    width:54px;
+    height:54px;
+    margin-bottom:28px;
+}
+
+.team .solution-card h3{
+    min-height:62px;
+    font-size:23px;
+    line-height:1.35;
+}
+
+.team .solution-card p{
+    margin-top:14px;
+    font-size:17px;
+    line-height:1.75;
+}
+
+@media (max-width:1180px){
+    .entry-process .process-grid-six,
+    .company .service-box .service-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        max-width:760px;
+    }
+
+    .entry-process .process-grid-six .process-step:nth-child(odd)::after{
+        display:block;
+        top:50%;
+        right:-24px;
+        width:24px;
+        height:1px;
+        background:rgba(255,140,26,.36);
+        transform:translateY(-50%);
+        pointer-events:none;
+    }
+
+    .entry-process .process-grid-six .process-step:nth-child(even)::after{
+        display:none;
+    }
+
+    .team .solution-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .team .solution-card h3{
+        min-height:auto;
+    }
+}
+
+@media (max-width:640px){
+    .entry-process .process-grid-six,
+    .company .service-box .service-grid,
+    .team .solution-grid{
+        grid-template-columns:1fr;
+        max-width:none;
+    }
+
+    .entry-process .process-grid-six .process-step::after{
+        display:none;
+    }
+
+    .entry-process .process-step,
+    .company .service-grid article,
+    .team .solution-card{
+        min-height:auto;
+        padding:24px;
+    }
+
+    .company .service-grid h3{
+        font-size:22px;
+    }
+
+    .company .service-grid article p{
+        font-size:16px;
+        line-height:1.65;
+    }
+
+    .company .service-grid article > span{
+        width:52px;
+        height:52px;
+        margin-bottom:20px;
+        font-size:18px;
+    }
+
+    .team .solution-card h3{
+        min-height:auto;
+        font-size:22px;
+    }
+
+    .team .solution-card p{
+        font-size:16px;
+    }
+}
