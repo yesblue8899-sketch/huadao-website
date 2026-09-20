@@ -1,4 +1,4 @@
-const clean = (value, max = 1000) => String(value || "").trim().slice(0, max);
+const clean = (value, max = 1000) => String(value ?? "").trim().slice(0, max);
 
 const safeMeta = (meta = {}) => Object.fromEntries(
     Object.entries(meta).map(([key, value]) => [key, clean(value, 300)])
@@ -32,6 +32,20 @@ const formatChinaTime = (value) => {
 
 const leadId = (lead) => lead.id || "pending";
 const display = (value, max = 300) => clean(value, max) || "未填写";
+const requestTimeoutMs = 8000;
+
+const fetchWithTimeout = async (url, options = {}) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort("request timeout"), requestTimeoutMs);
+    try {
+        return await fetch(url, {
+            ...options,
+            signal: controller.signal
+        });
+    } finally {
+        clearTimeout(timeout);
+    }
+};
 
 const buildLeadText = (lead) => [
     "【华道出海｜官网新增客户咨询】",
@@ -81,7 +95,7 @@ export const sendFeishuLeadNotification = async (lead, env) => {
         return { ok: false, skipped: true, reason: "FEISHU_LEADS_WEBHOOK not configured" };
     }
 
-    const response = await fetch(env.FEISHU_LEADS_WEBHOOK, {
+    const response = await fetchWithTimeout(env.FEISHU_LEADS_WEBHOOK, {
         method: "POST",
         headers: {
             "Content-Type": "application/json; charset=utf-8"
@@ -102,16 +116,24 @@ export const sendFeishuLeadNotification = async (lead, env) => {
         data = {};
     }
 
-    const feishuCode = data.code ?? data.StatusCode ?? 0;
+    const feishuCode = data.code ?? data.StatusCode ?? data.errcode ?? 0;
+    const feishuMessage = clean(data.msg || data.StatusMessage || data.errmsg || text || "success", 500);
     if (!response.ok || feishuCode !== 0) {
         return {
             ok: false,
             status: response.status,
-            reason: clean(data.msg || data.StatusMessage || text || "Feishu webhook request failed", 500)
+            code: feishuCode,
+            msg: feishuMessage,
+            reason: feishuMessage
         };
     }
 
-    return { ok: true, status: response.status };
+    return {
+        ok: true,
+        status: response.status,
+        code: feishuCode,
+        msg: feishuMessage
+    };
 };
 
 export const sendEmailLeadNotification = async (lead, env) => {
@@ -165,6 +187,8 @@ const runNotification = async (lead, successEvent, failedEvent, sender) => {
             logEvent(successEvent, {
                 lead_id: leadId(lead),
                 status: result.status,
+                code: result.code,
+                msg: result.msg,
                 message_id: result.id
             });
         } else {

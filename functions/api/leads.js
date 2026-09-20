@@ -14,6 +14,36 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), {
 });
 
 const clean = (value, max = 500) => String(value || "").trim().slice(0, max);
+const shouldReturnNotificationDebug = (payload, lead) =>
+    clean(payload.debugNotification, 80) === "codex-feishu-production-test" &&
+    lead.company === "Codex Feishu Production Test - 可删除" &&
+    lead.contact_name === "Codex Test" &&
+    lead.contact_method === "TEST-ONLY-FEISHU";
+
+const notificationSummary = (results = []) => {
+    const names = ["feishu", "email"];
+    return Object.fromEntries(results.map((item, index) => {
+        if (item.status === "fulfilled") {
+            const value = item.value || {};
+            return [names[index] || `notification_${index + 1}`, {
+                ok: Boolean(value.ok),
+                skipped: Boolean(value.skipped),
+                status: value.status || null,
+                code: value.code ?? null,
+                msg: value.msg || null,
+                reason: value.reason || null
+            }];
+        }
+        return [names[index] || `notification_${index + 1}`, {
+            ok: false,
+            skipped: false,
+            status: null,
+            code: null,
+            msg: null,
+            reason: item.reason?.message || "notification promise rejected"
+        }];
+    }));
+};
 
 export async function onRequestPost(context) {
     const { request, env } = context;
@@ -134,20 +164,13 @@ export async function onRequestPost(context) {
             source_channel: savedLead.source_channel
         }));
 
-        const notificationTask = sendLeadNotifications(savedLead, env);
-        if (context.waitUntil) {
-            context.waitUntil(notificationTask);
-        } else {
-            notificationTask.catch((error) => {
-                console.log(JSON.stringify({
-                    event: "LEAD_NOTIFICATION_FAILED",
-                    lead_id: savedLead.id,
-                    reason: error?.message || "notification task failed"
-                }));
-            });
+        const notificationResults = await sendLeadNotifications(savedLead, env);
+        const body = { success: true, leadId: savedLead.id };
+        if (shouldReturnNotificationDebug(payload, lead)) {
+            body.notifications = notificationSummary(notificationResults);
         }
 
-        return json({ success: true, leadId: savedLead.id });
+        return json(body);
     } catch (error) {
         return json({ success: false, error: "提交失败，请稍后重试。" }, 500);
     }
