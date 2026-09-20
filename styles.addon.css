@@ -3597,8 +3597,16 @@ body{
 }
 
 .market-card img.market-image--brazil{
-    object-fit:cover;
-    object-position:left center;
+    object-fit:contain;
+    object-position:center center;
+    background:#f7fbff;
+}
+
+@media (max-width:768px){
+    .market-card img.market-image--brazil{
+        object-fit:cover;
+        object-position:left center;
+    }
 }
 
 .latam-comparison{
