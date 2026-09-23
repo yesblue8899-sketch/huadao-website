@@ -165,9 +165,15 @@ export async function onRequestPost(context) {
         }));
 
         const notificationResults = await sendLeadNotifications(savedLead, env);
+        const diagnostics = notificationSummary(notificationResults);
         const body = { success: true, leadId: savedLead.id };
+        if (diagnostics.feishu && !diagnostics.feishu.ok) {
+            body.notificationDiagnostics = {
+                feishu: diagnostics.feishu
+            };
+        }
         if (shouldReturnNotificationDebug(payload, lead)) {
-            body.notifications = notificationSummary(notificationResults);
+            body.notifications = diagnostics;
         }
 
         return json(body);

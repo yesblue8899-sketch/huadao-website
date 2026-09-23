@@ -195,6 +195,8 @@ const runNotification = async (lead, successEvent, failedEvent, sender) => {
             logEvent(failedEvent, {
                 lead_id: leadId(lead),
                 status: result.status,
+                code: result.code,
+                msg: result.msg,
                 skipped: result.skipped ? "true" : "false",
                 reason: result.reason
             });
