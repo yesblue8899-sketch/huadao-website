@@ -47,7 +47,28 @@ const parseFeishuBody = (text) => {
     }
 };
 
+const getAdminToken = (env) => clean(env.INSIGHTS_WRITE_TOKEN, 500);
+
+const isAuthorized = (request, env) => {
+    const adminToken = getAdminToken(env);
+    if (!adminToken) return false;
+    const authorization = request.headers.get("authorization") || "";
+    const headerToken = request.headers.get("x-admin-token") || "";
+    return authorization === `Bearer ${adminToken}` || headerToken === adminToken;
+};
+
 export async function onRequestGet({ request, env }) {
+    if (!getAdminToken(env)) {
+        console.log(JSON.stringify({
+            event: "FEISHU_TEST_AUTH_FAILED",
+            reason: "INSIGHTS_WRITE_TOKEN not configured"
+        }));
+        return json({ success: false, error: "Feishu test endpoint authentication is not configured." }, 503);
+    }
+    if (!isAuthorized(request, env)) {
+        return json({ success: false, error: "Unauthorized" }, 401);
+    }
+
     const webhook = clean(env.FEISHU_LEADS_WEBHOOK, 500);
     const runtimeEnvironment = detectRuntimeEnvironment(request, env);
     const base = {
