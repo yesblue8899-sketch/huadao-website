@@ -50,6 +50,7 @@ export async function onRequestGet({ request, env }) {
         runtimeEnvironment,
         cfPagesBranch: clean(env.CF_PAGES_BRANCH, 120) || null,
         cfPagesUrl: clean(env.CF_PAGES_URL, 300) || null,
+        relayConfigured: Boolean(clean(env.WECOM_RELAY_URL, 500) && clean(env.WECOM_RELAY_TOKEN, 500)),
         corpIdConfigured: Boolean(clean(env.WECOM_CORP_ID, 200)),
         corpIdMasked: maskIdentifier(env.WECOM_CORP_ID),
         agentIdConfigured: Boolean(clean(env.WECOM_AGENT_ID, 40)),

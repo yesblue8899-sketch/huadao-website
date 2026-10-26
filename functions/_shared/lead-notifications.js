@@ -117,6 +117,11 @@ const wecomConfig = (env) => ({
     toUser: clean(env.WECOM_TO_USER, 500)
 });
 
+const wecomRelayConfig = (env) => ({
+    url: clean(env.WECOM_RELAY_URL, 500).replace(/\/$/, ""),
+    token: clean(env.WECOM_RELAY_TOKEN, 500)
+});
+
 const missingWecomConfig = (config) => [
     ["WECOM_CORP_ID", config.corpId],
     ["WECOM_AGENT_ID", config.agentId],
@@ -124,7 +129,79 @@ const missingWecomConfig = (config) => [
     ["WECOM_TO_USER", config.toUser]
 ].filter(([, value]) => !value).map(([name]) => name);
 
+const sendWecomViaRelay = async (lead, relay) => {
+    let lastResult = {
+        ok: false,
+        status: null,
+        code: null,
+        msg: null,
+        reason: "WeCom relay request failed"
+    };
+
+    for (let attempt = 1; attempt <= wecomMaxAttempts; attempt += 1) {
+        try {
+            const response = await fetchWithTimeout(relay.url, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${relay.token}`,
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify({ lead })
+            });
+            const body = parseJson(await response.text());
+            const code = body.code ?? null;
+            const msg = clean(body.msg || body.error || "success", 500);
+            if (response.ok && body.ok === true) {
+                return {
+                    ok: true,
+                    status: response.status,
+                    code,
+                    msg,
+                    attempts: attempt,
+                    via: "relay"
+                };
+            }
+
+            lastResult = {
+                ok: false,
+                status: response.status,
+                code,
+                msg,
+                reason: msg,
+                attempts: attempt,
+                via: "relay"
+            };
+            if (attempt === wecomMaxAttempts || !isRetryableWecomResult(response.status, code)) return lastResult;
+        } catch (error) {
+            lastResult = {
+                ok: false,
+                status: null,
+                code: null,
+                msg: null,
+                reason: error?.message || "WeCom relay request failed",
+                attempts: attempt,
+                via: "relay"
+            };
+            if (attempt === wecomMaxAttempts) return lastResult;
+        }
+    }
+
+    return lastResult;
+};
+
 export const sendWecomLeadNotification = async (lead, env) => {
+    const relay = wecomRelayConfig(env);
+    if (relay.url || relay.token) {
+        if (!relay.url || !relay.token) {
+            return {
+                ok: false,
+                skipped: true,
+                reason: "WeCom relay configuration missing: WECOM_RELAY_URL and WECOM_RELAY_TOKEN"
+            };
+        }
+        return sendWecomViaRelay(lead, relay);
+    }
+
     const config = wecomConfig(env);
     const missing = missingWecomConfig(config);
     if (missing.length > 0) {
