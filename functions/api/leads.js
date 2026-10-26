@@ -21,7 +21,7 @@ const shouldReturnNotificationDebug = (payload, lead) =>
     lead.contact_method === "TEST-ONLY-FEISHU";
 
 const notificationSummary = (results = []) => {
-    const names = ["feishu", "email"];
+    const names = ["feishu", "wecom", "email"];
     return Object.fromEntries(results.map((item, index) => {
         if (item.status === "fulfilled") {
             const value = item.value || {};
@@ -167,10 +167,11 @@ export async function onRequestPost(context) {
         const notificationResults = await sendLeadNotifications(savedLead, env);
         const diagnostics = notificationSummary(notificationResults);
         const body = { success: true, leadId: savedLead.id };
-        if (diagnostics.feishu && !diagnostics.feishu.ok) {
-            body.notificationDiagnostics = {
-                feishu: diagnostics.feishu
-            };
+        const failedNotifications = Object.fromEntries(
+            Object.entries(diagnostics).filter(([, result]) => !result.ok)
+        );
+        if (Object.keys(failedNotifications).length > 0) {
+            body.notificationDiagnostics = failedNotifications;
         }
         if (shouldReturnNotificationDebug(payload, lead)) {
             body.notifications = diagnostics;

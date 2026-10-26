@@ -33,6 +33,7 @@ const formatChinaTime = (value) => {
 const leadId = (lead) => lead.id || "pending";
 const display = (value, max = 300) => clean(value, max) || "未填写";
 const requestTimeoutMs = 8000;
+const wecomMaxAttempts = 2;
 
 const fetchWithTimeout = async (url, options = {}) => {
     const controller = new AbortController();
@@ -67,6 +68,163 @@ const buildLeadText = (lead) => [
     "",
     "请及时跟进该客户。"
 ].join("\n");
+
+const maskContact = (value) => {
+    const contact = display(value, 120);
+    if (contact === "未填写") return contact;
+    if (contact.includes("@")) {
+        const [local, domain] = contact.split("@");
+        return `${local.slice(0, 2)}***@${domain}`;
+    }
+    if (/^\+?[\d\s-]+$/.test(contact)) {
+        const digits = contact.replace(/\D/g, "");
+        if (digits.length >= 7) return `${digits.slice(0, 3)}****${digits.slice(-2)}`;
+    }
+    if (contact.length > 4) return `${contact.slice(0, 2)}***${contact.slice(-2)}`;
+    return "已填写";
+};
+
+const buildWecomLeadText = (lead) => [
+    "【华道出海｜官网新客户咨询】",
+    "",
+    `客户称呼：${display(lead.contact_name, 80)}`,
+    `公司名称：${display(lead.company, 120)}`,
+    `意向国家：${display(lead.market, 40)}`,
+    `业务摘要：${display(lead.business_status, 600)}`,
+    `客户来源：${display(lead.source_channel, 20)}`,
+    `提交时间：${formatChinaTime(lead.submitted_at)}`,
+    `线索编号：${leadId(lead)}`,
+    `联系方式（已保护）：${maskContact(lead.contact_method)}`
+].join("\n");
+
+const parseJson = (text) => {
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        return {};
+    }
+};
+
+const isRetryableWecomResult = (status, code) => (
+    status === null || status === 408 || status === 429 || status >= 500 ||
+    [40001, 40014, 42001, 45009].includes(Number(code))
+);
+
+const wecomConfig = (env) => ({
+    corpId: clean(env.WECOM_CORP_ID, 200),
+    agentId: clean(env.WECOM_AGENT_ID, 40),
+    appSecret: clean(env.WECOM_APP_SECRET, 500),
+    toUser: clean(env.WECOM_TO_USER, 500)
+});
+
+const missingWecomConfig = (config) => [
+    ["WECOM_CORP_ID", config.corpId],
+    ["WECOM_AGENT_ID", config.agentId],
+    ["WECOM_APP_SECRET", config.appSecret],
+    ["WECOM_TO_USER", config.toUser]
+].filter(([, value]) => !value).map(([name]) => name);
+
+export const sendWecomLeadNotification = async (lead, env) => {
+    const config = wecomConfig(env);
+    const missing = missingWecomConfig(config);
+    if (missing.length > 0) {
+        return {
+            ok: false,
+            skipped: true,
+            reason: `WeCom configuration missing: ${missing.join(", ")}`
+        };
+    }
+    if (!/^\d+$/.test(config.agentId)) {
+        return {
+            ok: false,
+            skipped: true,
+            reason: "WECOM_AGENT_ID must be numeric"
+        };
+    }
+
+    let lastResult = {
+        ok: false,
+        status: null,
+        code: null,
+        msg: null,
+        reason: "WeCom notification failed"
+    };
+
+    for (let attempt = 1; attempt <= wecomMaxAttempts; attempt += 1) {
+        try {
+            const tokenUrl = new URL("https://qyapi.weixin.qq.com/cgi-bin/gettoken");
+            tokenUrl.searchParams.set("corpid", config.corpId);
+            tokenUrl.searchParams.set("corpsecret", config.appSecret);
+            const tokenResponse = await fetchWithTimeout(tokenUrl.toString());
+            const tokenBody = parseJson(await tokenResponse.text());
+            const tokenCode = tokenBody.errcode ?? 0;
+            if (!tokenResponse.ok || tokenCode !== 0 || !tokenBody.access_token) {
+                lastResult = {
+                    ok: false,
+                    status: tokenResponse.status,
+                    code: tokenCode,
+                    msg: clean(tokenBody.errmsg || "WeCom access token request failed", 500),
+                    reason: clean(tokenBody.errmsg || "WeCom access token request failed", 500),
+                    attempts: attempt
+                };
+                if (attempt === wecomMaxAttempts || !isRetryableWecomResult(tokenResponse.status, tokenCode)) return lastResult;
+                continue;
+            }
+
+            const sendUrl = new URL("https://qyapi.weixin.qq.com/cgi-bin/message/send");
+            sendUrl.searchParams.set("access_token", tokenBody.access_token);
+            const sendResponse = await fetchWithTimeout(sendUrl.toString(), {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify({
+                    touser: config.toUser,
+                    msgtype: "text",
+                    agentid: Number(config.agentId),
+                    text: {
+                        content: buildWecomLeadText(lead)
+                    },
+                    safe: 0
+                })
+            });
+            const sendBody = parseJson(await sendResponse.text());
+            const sendCode = sendBody.errcode ?? 0;
+            const sendMessage = clean(sendBody.errmsg || "success", 500);
+            if (sendResponse.ok && sendCode === 0) {
+                return {
+                    ok: true,
+                    status: sendResponse.status,
+                    code: sendCode,
+                    msg: sendMessage,
+                    attempts: attempt
+                };
+            }
+
+            lastResult = {
+                ok: false,
+                status: sendResponse.status,
+                code: sendCode,
+                msg: sendMessage,
+                reason: sendMessage,
+                attempts: attempt
+            };
+            if (attempt === wecomMaxAttempts || !isRetryableWecomResult(sendResponse.status, sendCode)) return lastResult;
+        } catch (error) {
+            lastResult = {
+                ok: false,
+                status: null,
+                code: null,
+                msg: null,
+                reason: error?.message || "WeCom notification request failed",
+                attempts: attempt
+            };
+            if (attempt === wecomMaxAttempts) return lastResult;
+        }
+    }
+
+    return lastResult;
+};
 
 const buildLeadHtml = (lead) => `
 <!doctype html>
@@ -217,6 +375,12 @@ export const sendLeadNotifications = async (lead, env) => Promise.allSettled([
         "FEISHU_NOTIFICATION_SUCCESS",
         "FEISHU_NOTIFICATION_FAILED",
         () => sendFeishuLeadNotification(lead, env)
+    ),
+    runNotification(
+        lead,
+        "WECOM_NOTIFICATION_SUCCESS",
+        "WECOM_NOTIFICATION_FAILED",
+        () => sendWecomLeadNotification(lead, env)
     ),
     runNotification(
         lead,
